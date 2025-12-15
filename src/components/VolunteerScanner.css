@@ -1,0 +1,371 @@
+/* src/components/VolunteerScanner.css */
+
+/* Floating Button */
+/* Floating Button - Bottom Center */
+.volunteer-float-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Centered */
+    background: linear-gradient(135deg, #ffd700, #fdb931);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(253, 185, 49, 0.5);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Outfit', sans-serif;
+    white-space: nowrap;
+}
+
+.volunteer-float-btn:hover {
+    transform: translateX(-50%) translateY(-5px) scale(1.05);
+    /* Maintain center + lift */
+    box-shadow: 0 8px 25px rgba(253, 185, 49, 0.7);
+}
+
+/* Mobile Responsiveness for Button */
+@media (max-width: 480px) {
+    .volunteer-float-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+        bottom: 20px;
+    }
+}
+
+/* Overlay */
+.scanner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Main Box */
+.scanner-box {
+    background: #1a1a1a;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+/* Header */
+.scanner-header {
+    background: #111;
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scanner-header h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(to right, #fff, #bbb);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+/* Content Area */
+.scanner-step {
+    padding: 24px;
+    overflow-y: auto;
+    color: #eee;
+}
+
+/* Event List */
+.v-event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.v-event-item {
+    background: #252525;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #333;
+}
+
+.v-event-item:hover {
+    background: #333;
+    border-color: #555;
+    transform: translateX(4px);
+}
+
+.v-event-item strong {
+    display: block;
+    font-size: 1.1rem;
+    color: #ffd700;
+    margin-bottom: 4px;
+}
+
+.v-event-item span {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Toggle Tabs (Scan / Manual) */
+.scanner-tabs {
+    display: flex;
+    background: #111;
+    padding: 4px;
+    margin: 0 24px 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: #333;
+    color: #ffd700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Video/Scanner Area */
+.video-wrapper {
+    background: #000;
+    border-radius: 16px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+}
+
+.scanner-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Scan Line Animation */
+.scan-line {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: #ffd700;
+    box-shadow: 0 0 10px #ffd700;
+    top: 0;
+    left: 0;
+    animation: scannerMove 2s linear infinite;
+    z-index: 10;
+}
+
+@keyframes scannerMove {
+    0% {
+        top: 0;
+        opacity: 0.5;
+    }
+
+    50% {
+        top: 100%;
+        opacity: 1;
+    }
+
+    100% {
+        top: 0;
+        opacity: 0.5;
+    }
+}
+
+/* Manual Entry Form */
+.manual-entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.manual-input {
+    background: #111;
+    border: 1px solid #333;
+    padding: 16px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.manual-input:focus {
+    border-color: #ffd700;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #ffd700, #fdb931);
+    color: #000;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.submit-btn:hover {
+    transform: scale(1.02);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Result Display */
+.scan-result {
+    text-align: center;
+    padding: 30px;
+    border-radius: 16px;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scan-result.success {
+    background: rgba(46, 204, 113, 0.15);
+    border-color: #2ecc71;
+}
+
+.scan-result.error {
+    background: rgba(231, 76, 60, 0.15);
+    border-color: #e74c3c;
+}
+
+.result-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.scan-result h4 {
+    font-size: 1.5rem;
+    margin: 8px 0;
+    color: #fff;
+}
+
+.scan-result.success h4 {
+    color: #2ecc71;
+}
+
+.scan-result.error h4 {
+    color: #e74c3c;
+}
+
+.scan-details {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 16px 0;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.next-btn {
+    background: #333;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.next-btn:hover {
+    background: #444;
+    border-color: #fff;
+}
+
+/* Helper */
+.muted {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: #ffd700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.space-y-4>*+* {
+    margin-top: 1rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

@@ -1,0 +1,9 @@
+/* src/App.css */
+main {
+  min-height: calc(100vh - 5.5rem);
+}
+
+/* Fix page background behind modal */
+body.modal-open {
+  overflow: hidden;
+}

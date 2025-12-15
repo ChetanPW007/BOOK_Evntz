@@ -1,0 +1,161 @@
+/* Auditorium Selection Modal */
+.audi-modal {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(10, 10, 10, 0.95));
+    border: 1.5px solid rgba(250, 227, 140, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(250, 227, 140, 0.15);
+    animation: slideInModal 0.3s ease-out;
+}
+
+@keyframes slideInModal {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.audi-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.audi-modal-header h2 {
+    margin: 0;
+    color: #fae38c;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 32px;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    color: #fae38c;
+    transform: rotate(90deg);
+}
+
+.audi-modal-subtitle {
+    color: #aaa;
+    margin: 0 0 25px 0;
+    font-size: 0.95rem;
+}
+
+.audi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.audi-card {
+    background: rgba(30, 30, 30, 0.6);
+    border: 1.5px solid rgba(250, 227, 140, 0.2);
+    border-radius: 16px;
+    padding: 25px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.audi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(250, 227, 140, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.audi-card:hover {
+    border-color: rgba(250, 227, 140, 0.6);
+    transform: translateY(-4px);
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(250, 227, 140, 0.2);
+}
+
+.audi-card:hover::before {
+    opacity: 1;
+}
+
+.audi-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    filter: grayscale(0.3);
+}
+
+.audi-card:hover .audi-icon {
+    filter: grayscale(0);
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+
+.audi-name {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.audi-action {
+    color: #fae38c;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.audi-card:hover .audi-action {
+    opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .audi-modal {
+        padding: 20px;
+    }
+
+    .audi-modal-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .audi-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .audi-card {
+        padding: 20px 15px;
+    }
+}

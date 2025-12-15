@@ -1,0 +1,212 @@
+/* ==========================================================
+   GLOBAL WRAPPER — Premium Cinematic Dark Theme
+========================================================== */
+.login-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(circle at top, #3a0000, #0a0000 70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft lighting spotlight */
+.login-wrapper::before {
+  content: "";
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  background: rgba(255, 215, 130, 0.07);
+  border-radius: 50%;
+  filter: blur(120px);
+  top: -120px;
+  left: -120px;
+}
+
+.login-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  background: rgba(255, 0, 120, 0.08);
+  border-radius: 50%;
+  filter: blur(140px);
+  bottom: -150px;
+  right: -150px;
+}
+
+/* ==========================================================
+   LOGO
+========================================================== */
+.login-logo {
+  width: 120px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px rgba(250, 227, 140, 0.3));
+  animation: fadeSlide 0.7s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================
+   ROLE TOGGLE — Premium Glass Buttons
+========================================================== */
+.role-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.role-toggle button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 500;
+}
+
+.role-toggle button:hover {
+  background: rgba(250, 227, 140, 0.25);
+  border-color: #fae38c;
+}
+
+.role-toggle button.active {
+  background: #fae38c;
+  color: #000;
+  border-color: rgba(250, 227, 140, 0.95);
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(250, 227, 140, 0.4);
+}
+
+/* ==========================================================
+   FORM BOX
+========================================================== */
+.form-box {
+  display: flex;
+  flex-direction: column;
+  width: 330px;
+  gap: 14px;
+  margin-top: 10px;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Premium Inputs */
+.form-box input {
+  padding: 13px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  font-size: 14px;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.form-box input:focus {
+  box-shadow: 0 0 8px rgba(250, 227, 140, 0.6);
+}
+
+.form-box input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   LOGIN BUTTON — Gold Glow Button
+========================================================== */
+.secure-login-btn {
+  background: linear-gradient(135deg, #fae38c, #e0c165);
+  color: black;
+  padding: 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 15px rgba(250, 227, 140, 0.45);
+  transition: 0.25s ease;
+}
+
+.secure-login-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 22px rgba(250, 227, 140, 0.7);
+}
+
+.secure-login-btn:disabled {
+  background: #777;
+  color: #333;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Loader inside button */
+.btn-loader {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-top-color: #000;
+  animation: spin 0.9s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================
+   FORGOT PASSWORD
+========================================================== */
+.forgot {
+  text-align: center;
+  font-size: 12px;
+  color: #fae38c;
+  cursor: pointer;
+  margin-top: 6px;
+  opacity: 0.8;
+  transition: 0.25s;
+}
+
+.forgot:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* ==========================================================
+   TOAST POSITIONING
+========================================================== */
+.gmu-toast-wrapper {
+  position: fixed;
+  right: 20px;
+  top: 85px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* ==========================================================
+   MOBILE RESPONSIVE
+========================================================== */
+@media (max-width: 420px) {
+  .form-box {
+    width: 90%;
+  }
+
+  .role-toggle {
+    gap: 6px;
+  }
+
+  .login-logo {
+    width: 105px;
+  }
+}

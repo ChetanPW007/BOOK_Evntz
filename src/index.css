@@ -1,0 +1,155 @@
+/* src/index.css */
+:root {
+  --gmu-maroon: #B71C1C;
+  --gmu-gold: #FAE38C;
+
+  /* EXTRA COLORS FOR TICKET UI */
+  --ticket-bg: #111;
+  --ticket-border: #333;
+  --ticket-accent: #FAE38C;
+}
+
+/* reset basics */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: hidden;
+  /* No horizontal scroll at root */
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background-color: #050505;
+  /* Fallback */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  /* Global Gradient to prevent gaps */
+  background: linear-gradient(180deg, #3b0b0b, #050505) no-repeat fixed;
+  color: #e6e6e6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Touch-friendly buttons and inputs (44px minimum) */
+button,
+input[type="button"],
+input[type="submit"],
+a {
+  min-height: 44px;
+  touch-action: manipulation;
+  /* Prevents double-tap zoom */
+}
+
+/* primary button */
+.primary {
+  background: var(--gmu-maroon);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.primary:hover {
+  background: #8d1616;
+}
+
+/* seat states */
+.seat {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.seat.occupied {
+  background: rgba(255, 0, 0, 0.22);
+  cursor: not-allowed;
+}
+
+.seat.selected {
+  background: var(--gmu-gold);
+  color: #000;
+}
+
+/* MODAL backdrop */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* MODAL container */
+.modal-box {
+  background: #1a1a1a;
+  padding: 24px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 460px;
+  border: 1px solid #333;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+/* --- TICKET STYLE --- */
+.ticket-container {
+  width: 100%;
+  background: var(--ticket-bg);
+  border: 1px solid var(--ticket-border);
+  border-radius: 14px;
+  padding: 18px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* perforated cut line */
+.ticket-container:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  border-top: 1px dashed #555;
+}
+
+/* header */
+.ticket-header {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ticket-accent);
+  margin-bottom: 10px;
+}
+
+/* detail rows */
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 15px;
+}
+
+/* QR area */
+.ticket-qr-box {
+  display: flex;
+  justify-content: center;
+  padding-top: 18px;
+}

@@ -1,0 +1,142 @@
+.profile-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 9999;
+}
+
+/* Trigger Button */
+.profile-toggle-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #fafafa;
+  cursor: pointer;
+  gap: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: 0.2s ease;
+}
+
+.profile-toggle-btn:hover {
+  opacity: 0.9;
+}
+
+/* Avatar Small */
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #f5c542;
+  object-fit: cover;
+}
+
+.avatar-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #222;
+  color: #f5c542;
+  font-weight: bold;
+  border: 2px solid #f5c542;
+}
+
+.username {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* ---------------------- */
+/* GLASSMORPHISM DROPDOWN */
+/* ---------------------- */
+
+.glass-effect {
+  background: rgba(20, 20, 30, 0.52);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 30px rgba(255, 220, 130, 0.25);
+}
+
+.profile-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 230px;
+  border-radius: 14px;
+  overflow: hidden;
+  transform-origin: top right;
+  will-change: transform, opacity, filter;
+}
+
+/* Header */
+.profile-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar-lg {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: 2px solid #f5c542;
+  object-fit: cover;
+}
+
+.avatar-text-lg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  background: #222;
+  color: #f5c542;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  border: 2px solid #f5c542;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #fff;
+}
+
+.user-id {
+  color: #bbb;
+  font-size: 0.82rem;
+}
+
+/* ---------------------- */
+/* MENU ITEMS + 3D TILT   */
+/* ---------------------- */
+
+.menu-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.25s ease, transform 0.2s ease;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.logout {
+  color: #ff6464;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .profile-menu {
+    width: 190px;
+  }
+  .username {
+    display: none;
+  }
+}

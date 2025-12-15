@@ -1,0 +1,28 @@
+
+@booking_blueprint.route("/user/<usn>", methods=["GET"])
+def bookings_for_user(usn):
+    bookings = gs.get_bookings()
+    filtered = []
+    for b in bookings:
+        # Check USN match (case insensitive)
+        if str(b.get("USN","")).strip().lower() == str(usn).strip().lower():
+            # Enrich with Event Details
+            event_id = b.get("EventID")
+            event_details = {}
+            if event_id:
+                # Inefficient O(N*M) but acceptable for small scale
+                events = gs.get_events()
+                found = next((e for e in events if str(e.get("ID")) == str(event_id)), None)
+                if found:
+                    event_details = {
+                        "eventName": found.get("Name"),
+                        "poster": found.get("Poster"),
+                        "eventImage": found.get("Poster"),
+                        "show": found.get("Time"), # Default show time if not in booking
+                    }
+            
+            # Merge
+            full_booking = {**b, **event_details}
+            filtered.append(full_booking)
+            
+    return jsonify({"status":"success","success":True, "data": filtered}), 200

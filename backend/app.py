@@ -1,0 +1,61 @@
+# backend/app.py
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+# Import blueprints
+from backend.routes.users import user_blueprint
+from backend.routes.events import event_blueprint
+from backend.routes.bookings import booking_blueprint
+from backend.routes.attendance import attendance_bp
+from backend.routes.auditoriums import auditorium_bp
+
+# Create Flask app
+app = Flask(__name__)
+
+# ---------------------------
+# CORS Configuration
+# ---------------------------
+# Allow requests from React dev server and support credentials (cookies)
+ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+CORS(
+    app,
+    resources={r"/api/*": {"origins": ALLOWED_ORIGINS}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],  # allow custom headers
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+)
+
+# ---------------------------
+# Register Blueprints
+# ---------------------------
+app.register_blueprint(user_blueprint, url_prefix="/api/users")
+app.register_blueprint(event_blueprint, url_prefix="/api/events")
+app.register_blueprint(booking_blueprint, url_prefix="/api/bookings")
+app.register_blueprint(attendance_bp, url_prefix="/api/attendance")
+app.register_blueprint(auditorium_bp, url_prefix="/api/auditoriums")
+
+# ---------------------------
+# Test Route
+# ---------------------------
+@app.route("/")
+def home():
+    return jsonify({"status": "success", "message": "College Auditorium Backend Running"}), 200
+
+# Global Error Handler to treat all errors as JSON
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    traceback.print_exc()
+    return jsonify({
+        "status": "error",
+        "message": f"Global Server Error: {str(e)}",
+        "type": type(e).__name__
+    }), 500
+
+# ---------------------------
+# Start Server
+# ---------------------------
+if __name__ == "__main__":
+    print("Starting backend on http://127.0.0.1:5000")
+    app.run(host="127.0.0.1", port=5000, debug=True)

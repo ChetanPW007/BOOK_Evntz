@@ -1,0 +1,174 @@
+/* =============================================
+   PREMIUM VIP TOAST NOTIFICATIONS
+============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
+
+/* Container Positioning - Upper Middle Screen */
+.Toastify__toast-container {
+  width: 420px !important;
+  font-family: 'Outfit', sans-serif !important;
+  padding: 12px !important;
+  top: 100px !important;
+  /* Upper-middle positioning */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+}
+
+/* Premium Toast Base - VIP Styling */
+.Toastify__toast {
+  border-radius: 20px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(10, 10, 10, 0.98)) !important;
+  border: 1.5px solid rgba(250, 227, 140, 0.3) !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(250, 227, 140, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  padding: 20px !important;
+  margin-bottom: 16px !important;
+  overflow: visible !important;
+  animation: slideInVIP 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative !important;
+}
+
+/* VIP Glow Effect */
+.Toastify__toast::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, #fae38c, #f9d56e, #fae38c);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.Toastify__toast:hover::before {
+  opacity: 1;
+}
+
+/* Success Toast - Premium Gold */
+.Toastify__toast--success {
+  border-left: 5px solid #2ecc71 !important;
+  background: linear-gradient(135deg,
+      rgba(46, 204, 113, 0.15),
+      rgba(30, 30, 30, 0.95)) !important;
+  box-shadow:
+    0 12px 40px rgba(46, 204, 113, 0.3),
+    0 0 30px rgba(46, 204, 113, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #2ecc71 !important;
+  filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.6));
+}
+
+/* Error Toast - Intense Red Glow */
+.Toastify__toast--error {
+  border-left: 5px solid #e74c3c !important;
+  background: linear-gradient(135deg,
+      rgba(231, 76, 60, 0.15),
+      rgba(30, 30, 30, 0.95)) !important;
+  box-shadow:
+    0 12px 40px rgba(231, 76, 60, 0.4),
+    0 0 30px rgba(231, 76, 60, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #e74c3c !important;
+  filter: drop-shadow(0 0 8px rgba(231, 76, 60, 0.6));
+}
+
+/* Warning Toast - Gold Accent */
+.Toastify__toast--warning {
+  border-left: 5px solid #fae38c !important;
+  background: linear-gradient(135deg,
+      rgba(250, 227, 140, 0.15),
+      rgba(30, 30, 30, 0.95)) !important;
+  box-shadow:
+    0 12px 40px rgba(250, 227, 140, 0.3),
+    0 0 30px rgba(250, 227, 140, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: #fae38c !important;
+  filter: drop-shadow(0 0 8px rgba(250, 227, 140, 0.6));
+}
+
+/* Premium Progress Bar */
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.15) !important;
+  height: 4px !important;
+  border-radius: 2px !important;
+}
+
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #2ecc71, #27ae60) !important;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.Toastify__progress-bar--error {
+  background: linear-gradient(90deg, #e74c3c, #c0392b) !important;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, #fae38c, #f9d56e) !important;
+  box-shadow: 0 0 10px rgba(250, 227, 140, 0.5);
+}
+
+/* Premium Close Button */
+.Toastify__close-button {
+  color: rgba(255, 255, 255, 0.6) !important;
+  opacity: 1 !important;
+  font-size: 20px !important;
+  transition: all 0.3s !important;
+}
+
+.Toastify__close-button:hover {
+  color: #fae38c !important;
+  transform: rotate(90deg) scale(1.2);
+}
+
+/* VIP Slide-In Animation */
+@keyframes slideInVIP {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 90% !important;
+    max-width: 360px !important;
+    top: 80px !important;
+  }
+
+  .Toastify__toast {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+}

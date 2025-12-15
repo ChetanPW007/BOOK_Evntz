@@ -1,0 +1,121 @@
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Glass Box */
+.event-modal.glass {
+  width: 90%;
+  max-width: 900px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(18px);
+  border-radius: 18px;
+  padding: 20px;
+  position: relative;
+  color: #fff;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+}
+
+/* Body */
+.modal-body {
+  display: flex;
+  gap: 20px;
+}
+
+/* Left */
+.left {
+  flex: 1;
+}
+.left .poster {
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+/* Right */
+.right {
+  flex: 2;
+}
+
+.event-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.event-meta {
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.people-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.person-card {
+  width: 90px;
+  text-align: center;
+}
+
+.person-card .avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+  object-fit: cover;
+}
+
+/* Buttons */
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.book-btn {
+  background: #ff0055;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.close-btn {
+  background: rgba(255,255,255,0.15);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}

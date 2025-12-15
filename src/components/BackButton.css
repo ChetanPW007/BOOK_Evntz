@@ -1,0 +1,31 @@
+.floating-back-btn {
+  position: fixed;
+  top: 85px; /* below header to avoid overlapping GMU logo */
+  left: 25px;
+  background: linear-gradient(135deg, rgba(250, 227, 140, 0.25), rgba(183, 28, 28, 0.4));
+  color: #fae38c;
+  border: 1px solid rgba(250, 227, 140, 0.3);
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1100;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 10px rgba(250, 227, 140, 0.15);
+}
+
+.floating-back-btn:hover {
+  transform: translateX(-3px);
+  background: linear-gradient(135deg, rgba(250, 227, 140, 0.4), rgba(183, 28, 28, 0.55));
+  box-shadow: 0 4px 16px rgba(250, 227, 140, 0.25);
+}
+
+.back-arrow-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}

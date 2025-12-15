@@ -1,0 +1,203 @@
+/* === Container & Title === */
+.mytickets-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+}
+
+.mt-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #fae38c;
+  text-align: center;
+}
+
+/* === Tickets List === */
+.mt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* === Individual Ticket Card === */
+/* Shine Keyframes */
+@keyframes shineTrigger {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+
+  100% {
+    transform: translateX(150%) skewX(-25deg);
+  }
+}
+
+/* === Individual Ticket Card === */
+.mt-card {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  /* Premium Dark Metallic Gradient */
+  background: linear-gradient(135deg, #1c1c1c 0%, #0d0d0d 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 10px;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+/* Shine Overlay */
+.mt-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg,
+      transparent 30%,
+      rgba(250, 227, 140, 0.12) 50%,
+      transparent 70%);
+  transform: translateX(-150%) skewX(-25deg);
+  transition: none;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mt-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(250, 227, 140, 0.2);
+  border-color: rgba(250, 227, 140, 0.5);
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+}
+
+.mt-card:hover::before {
+  animation: shineTrigger 0.75s forwards;
+}
+
+/* === Poster Image === */
+.mt-poster {
+  width: 120px;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+/* === Ticket Info === */
+.mt-info {
+  flex: 1;
+  min-width: 180px;
+}
+
+.mt-info h2 {
+  color: #fae38c;
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.mt-info p {
+  margin: 3px 0;
+  color: #ccc;
+  font-size: 14px;
+}
+
+/* === Buttons === */
+.mt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 10px;
+}
+
+.mt-view-btn,
+.mt-open-btn {
+  background: #fae38c;
+  color: #000;
+  font-weight: 600;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mt-view-btn:hover,
+.mt-open-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(250, 227, 140, 0.5);
+}
+
+/* === Empty State === */
+.mytickets-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  color: #aaa;
+  text-align: center;
+}
+
+.mytickets-empty h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.mytickets-empty p {
+  font-size: 16px;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .mt-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .mt-poster {
+    margin-right: 0;
+    margin-bottom: 10px;
+    width: 100px;
+    height: 140px;
+  }
+
+  .mt-actions {
+    flex-direction: row;
+    gap: 10px;
+    margin-left: 0;
+    justify-content: center;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mt-poster {
+    width: 90px;
+    height: 120px;
+  }
+
+  .mt-title {
+    font-size: 24px;
+  }
+
+  .mt-info h2 {
+    font-size: 18px;
+  }
+
+  .mt-info p {
+    font-size: 13px;
+  }
+
+  .mt-view-btn,
+  .mt-open-btn {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}

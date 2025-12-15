@@ -1,0 +1,108 @@
+/* src/components/Loading.css */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    height: 300px;
+    width: 100%;
+}
+
+.spinner-box {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Three rings for complexity and style */
+.circle-border {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    position: absolute;
+}
+
+/* Outer Ring - Gold */
+.outer-ring {
+    border-top: 3px solid #fae38c;
+    border-right: 3px solid rgba(250, 227, 140, 0.4);
+    animation: spin 1.5s linear infinite;
+    box-shadow: 0 0 15px rgba(250, 227, 140, 0.2);
+}
+
+/* Middle Ring - Maroon */
+.middle-ring {
+    width: 70%;
+    height: 70%;
+    border-bottom: 3px solid #b71c1c;
+    border-left: 3px solid rgba(183, 28, 28, 0.4);
+    animation: spinReverse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    box-shadow: 0 0 10px rgba(183, 28, 28, 0.2);
+}
+
+/* Inner Core - Gold Pulse */
+.inner-core {
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle, #fae38c 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulseCore 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinReverse {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes pulseCore {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1.2);
+        opacity: 0.9;
+    }
+}
+
+.loading-text-style {
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #fae38c;
+    text-transform: uppercase;
+    opacity: 0.8;
+    animation: fadeText 1.5s infinite alternate;
+}
+
+@keyframes fadeText {
+    0% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 0.9;
+    }
+}

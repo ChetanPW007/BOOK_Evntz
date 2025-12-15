@@ -1,0 +1,135 @@
+/* src/pages/user/profile/UserProfile.css */
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: #0b0b0f;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  padding-top: 120px;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.profile-container.fade-in {
+  opacity: 1;
+}
+
+.profile-card {
+  background: rgba(20, 20, 30, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  width: 90%;
+  max-width: 550px;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.btn-back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  color: #f5c542;
+  border: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-back:hover {
+  color: #fff;
+}
+
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f5c542;
+  margin-bottom: 15px;
+}
+
+.profile-name {
+  font-size: 1.6rem;
+  color: #f5c542;
+  margin-bottom: 10px;
+}
+
+.error-text {
+  color: orange;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.details-box {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+.details-box p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.details-box span {
+  color: #f5c542;
+  font-weight: 600;
+}
+
+.btn-logout {
+  margin-top: 25px;
+  background: #b71c1c;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.btn-logout:hover {
+  background: #d32f2f;
+}
+
+/* Fade animation for card */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading shimmer */
+.shimmer {
+  background: linear-gradient(110deg, #222 25%, #333 50%, #222 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  color: #777;
+  padding: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

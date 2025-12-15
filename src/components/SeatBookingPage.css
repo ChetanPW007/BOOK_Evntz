@@ -1,0 +1,93 @@
+:root{
+background: radial-gradient(circle at top, #1a1a1a, #0d0d0d 60%, #000);
+overflow-x: hidden;
+}
+
+
+/* Fade-In */
+.seatbooking-wrapper { animation: fadeIn 0.8s ease-out; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+
+/* TITLE */
+.seatbooking-title {
+font-size: 32px; font-weight: 700; color: #fff;
+text-align: center; margin-bottom: 20px;
+text-shadow: 0 0 20px #00ffffaa;
+animation: glowPulse 2s infinite;
+}
+@keyframes glowPulse {
+0%{text-shadow:0 0 12px #00f2ff;} 100%{text-shadow:0 0 28px #00eaff;}
+}
+
+
+/* ROW + COUNT */
+.seat-row-label { color:#fff; font-size:20px; font-weight:bold; text-shadow:0 0 8px #009dff; }
+.seat-row-count { font-size:14px; color:#72eaff; opacity:0.8; }
+.seat-row.locked { opacity:.4; filter:blur(.6px); pointer-events:none; position:relative; }
+.seat-row.locked::after { content:"🔒 LOCKED"; color:#ff6b6b; font-size:14px; text-shadow:0 0 10px red; position:absolute; left:0; top:-22px; }
+
+
+/* SEATS */
+.seat {
+width:48px; height:48px; border-radius:12px; border:2px solid #00eaff;
+background:#00141a; color:#fff; font-weight:600;
+cursor:pointer; transition:.25s ease; position:relative;
+}
+.seat:not(.booked):not(.selected):hover {
+transform:translateY(-4px) scale(1.05);
+box-shadow:0 0 18px #00ffff;
+}
+
+
+/* SELECTED */
+.seat.selected {
+background:linear-gradient(135deg,#00eaff,#007aff);
+border-color:#fff; color:#000; transform:scale(1.08);
+box-shadow:0 0 20px #00bfff;
+}
+
+
+/* BOOKED */
+.seat.booked { background:#333; border-color:#777; opacity:.6; cursor:not-allowed; text-decoration:line-through; }
+
+
+/* VIP */
+.seat.vip { border-color:gold; background:linear-gradient(145deg,#3b2b00,#1f1500); box-shadow:0 0 12px gold; }
+.seat.vip::after {
+content:"⭐"; position:absolute; top:-8px; right:-8px; font-size:16px; color:gold;
+text-shadow:0 0 8px gold; animation:vipPulse 1.8s infinite;
+}
+@keyframes vipPulse { 0%{transform:scale(1);} 60%{transform:scale(1.25);} 100%{transform:scale(1);} }
+
+
+/* LEGEND */
+.legend { display:flex; justify-content:center; margin:20px auto; gap:20px; }
+.legend-item { color:#fff; display:flex; gap:10px; text-shadow:0 0 10px #00eaff88; }
+.legend-box { width:22px; height:22px; border-radius:6px; box-shadow:0 0 8px #00eaff; }
+.legend-box.selected{background:#00eaff;} .legend-box.booked{background:#555;} .legend-box.vip{background:gold;} .legend-box.available{background:#003544;}
+
+
+/* BOOK BUTTON */
+.book-btn {
+width:220px; padding:14px 0; border-radius:14px; border:none;
+background:linear-gradient(135deg,#00eaff,#007aff);
+font-size:18px; font-weight:700; color:#000; margin:25px auto;
+cursor:pointer; box-shadow:0 0 12px #00eaff; transition:.3s;
+}
+.book-btn:hover { transform:scale(1.06); box-shadow:0 0 25px #00f2ff; }
+.book-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+
+/* TICKET MODAL */
+.ticket-modal { position:fixed; inset:0; background:#0008; backdrop-filter:blur(12px); display:flex; justify-content:center; align-items:center; }
+.ticket-content {
+width:340px; background:#001a22; padding:20px; border-radius:18px;
+color:#fff; text-align:center; border:2px solid #00eaff;
+animation:ticketPop .4s; box-shadow:0 0 25px #00eaffaa;
+}
+@keyframes ticketPop { 0%{opacity:0;transform:scale(.7);} 100%{opacity:1;transform:scale(1);} }
+.ticket-code-img { width:180px; height:180px; border-radius:12px; box-shadow:0 0 18px #00eaff; margin:15px auto; }
+.close-btn { padding:10px 22px; border-radius:10px; background:#007aff; color:#fff; cursor:pointer; transition:.25s; }
+.close-btn:hover { background:#00eaff; color:#000; box-shadow:0 0 15px #00eaff; }
+

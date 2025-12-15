@@ -1,0 +1,137 @@
+/* AuditoriumEvents.css */
+.audi-events-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #3b0b0b, #050505);
+    color: #fff;
+    padding: 2rem;
+}
+
+/* Header */
+.audi-header {
+    max-width: 1200px;
+    margin: 0 auto 3rem auto;
+    position: relative;
+}
+
+.back-icon {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fae38c;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: 0.2s;
+}
+
+.back-icon:hover {
+    background: rgba(250, 227, 140, 0.2);
+    border-color: #fae38c;
+}
+
+.audi-info {
+    background: linear-gradient(135deg, #1c1c1c 0%, #0d0d0d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.audi-name {
+    font-size: 2.5rem;
+    color: #fae38c;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.audi-capacity {
+    font-size: 1.1rem;
+    color: #ddd;
+    margin: 0.5rem 0;
+}
+
+.audi-desc {
+    color: #aaa;
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+/* Events Section */
+.events-section {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.no-events {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.loader {
+    text-align: center;
+    padding: 5rem;
+    font-size: 1.2rem;
+    color: #fae38c;
+}
+
+.not-found {
+    text-align: center;
+    padding: 5rem 2rem;
+}
+
+.not-found h2 {
+    color: #fae38c;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: #fae38c;
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: #f9d56e;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .audi-events-page {
+        padding: 1rem;
+    }
+
+    .audi-name {
+        font-size: 2rem;
+    }
+
+    .event-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}

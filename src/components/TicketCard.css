@@ -1,0 +1,156 @@
+/* Wrapper */
+.tcard-wrapper {
+  margin: 25px auto;
+  max-width: 880px;
+  padding: 10px;
+  animation: fadeInUp 0.6s ease;
+}
+
+/* Main Container */
+.tcard-container {
+  display: flex;
+  background: linear-gradient(135deg, #0a0a0a, #000);
+  border-radius: 22px;
+  border: 1px solid #ffffff22;
+  overflow: hidden;
+  box-shadow: 0 0 35px #0008, inset 0 0 20px #ffffff0d;
+  padding: 22px 26px;
+}
+
+/* Glow Effect */
+.premium-glow {
+  box-shadow: 0 0 50px #ff000033, inset 0 0 40px #ff000015;
+}
+
+/* Left Side */
+.tcard-left {
+  width: 65%;
+}
+
+.tcard-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.gold-text {
+  color: #ffd55c;
+  text-shadow: 0 0 10px #ffdd5c50;
+}
+
+/* Info Block */
+.tcard-info {
+  margin-top: 12px;
+}
+
+.t-info-row {
+  display: flex;
+  margin: 8px 0;
+}
+
+.t-label {
+  width: 100px;
+  font-weight: 600;
+  color: #9e9e9e;
+}
+
+.t-value {
+  color: #eaeaea;
+}
+
+.confirmed {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* QR Section */
+.tcard-right {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-box {
+  padding: 10px;
+  background: white;
+  border-radius: 12px;
+}
+
+/* Verified Badge */
+.verified-badge {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #00e676;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.9;
+}
+
+.v-dot {
+  width: 8px;
+  height: 8px;
+  background: #00e676;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00e676aa;
+}
+
+/* Scan Text */
+.scan-text {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #cccccc;
+}
+
+/* Perforated Line */
+.tcard-cut-line {
+  border-top: 2px dashed #2a2a2a;
+  text-align: center;
+  margin-top: 10px;
+  padding: 6px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Responsive */
+@media(max-width: 768px) {
+  .tcard-container {
+    flex-direction: column;
+    padding: 18px;
+  }
+
+  .tcard-left,
+  .tcard-right {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tcard-title {
+    font-size: 22px;
+  }
+
+  .t-info-row {
+    justify-content: center;
+  }
+
+  .t-label {
+    width: 85px;
+  }
+}

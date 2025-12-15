@@ -1,0 +1,297 @@
+/* src/components/DeveloperSection.css */
+.developer-section {
+    text-align: center;
+    padding: 60px 20px 40px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 10;
+}
+
+.dev-heading {
+    font-size: 2rem;
+    margin-bottom: 50px;
+    background: linear-gradient(90deg, #fae38c, #ffd95a, #fae38c);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.dev-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    /* Enhanced depth */
+    padding-bottom: 20px;
+    /* Space for shadow */
+}
+
+/* THE CARD WRAPPER */
+.dev-card {
+    width: 320px;
+    height: 420px;
+    position: relative;
+    cursor: pointer;
+}
+
+/* THE INNER 3D CONTAINER */
+.dev-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Snappy bouncy flip */
+    transform-style: preserve-3d;
+}
+
+/* FLIP STATE */
+.dev-card.flipped .dev-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* SHARED FACE STYLES */
+.dev-card-front,
+.dev-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    overflow: hidden;
+    /* For shine effect */
+
+    /* RADIANT DARK THEME */
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(250, 227, 140, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* SHINE EFFECT (Copied from EventCard) */
+@keyframes shineTrigger {
+    0% {
+        transform: translateX(-150%) skewX(-25deg);
+    }
+
+    100% {
+        transform: translateX(150%) skewX(-25deg);
+    }
+}
+
+.dev-card-front::before,
+.dev-card-back::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            transparent 30%,
+            rgba(250, 227, 140, 0.2) 50%,
+            transparent 70%);
+    transform: translateX(-150%) skewX(-25deg);
+    transition: none;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.dev-card:hover .dev-card-front::before,
+.dev-card:hover .dev-card-back::before {
+    animation: shineTrigger 0.7s forwards;
+}
+
+/* FRONT FACE */
+.dev-card-front {
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(10, 10, 10, 1));
+    transform: rotateY(0deg);
+    /* Explicit for stability */
+}
+
+/* BACK FACE */
+.dev-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, rgba(20, 20, 20, 0.95), #000);
+}
+
+/* GLOW EFFECT */
+.radiant-glow {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.dev-card:hover .radiant-glow {
+    box-shadow: 0 15px 40px rgba(250, 227, 140, 0.25),
+        inset 0 0 15px rgba(250, 227, 140, 0.05);
+    border-color: rgba(250, 227, 140, 0.6);
+}
+
+/* IMAGE */
+.dev-image-wrapper {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 25px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(250, 227, 140, 0.8);
+    box-shadow: 0 0 20px rgba(250, 227, 140, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.dev-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.dev-card:hover .dev-image {
+    transform: scale(1.1);
+}
+
+/* TEXT */
+.dev-name {
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 2;
+}
+
+.dev-details {
+    font-size: 1rem;
+    color: #fae38c;
+    font-weight: 500;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 2;
+}
+
+.dev-college {
+    font-size: 0.9rem;
+    color: #bbb;
+    font-style: italic;
+    position: relative;
+    z-index: 2;
+}
+
+.hint-text {
+    margin-top: 30px;
+    font-size: 0.75rem;
+    color: #666;
+    opacity: 0.8;
+    position: relative;
+    z-index: 2;
+    font-style: italic;
+}
+
+/* BACK CONTENT */
+.connect-text {
+    color: #fff;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.linkedin-btn {
+    background: none;
+    border: none;
+    color: #0c66c2;
+    /* Official LinkedIn Blue */
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    /* Subtle backing */
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.linkedin-btn:hover {
+    transform: scale(1.15) rotate(5deg);
+    color: #fae38c;
+    /* Gold on hover */
+    background: rgba(250, 227, 140, 0.1);
+    box-shadow: 0 0 20px rgba(250, 227, 140, 0.3);
+}
+
+.back-name {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+   ========================================= */
+
+@media (max-width: 768px) {
+    .developer-section {
+        padding: 40px 15px 30px;
+        margin-top: 20px;
+    }
+
+    .dev-heading {
+        font-size: 1.6rem;
+        margin-bottom: 30px;
+    }
+
+    /* Shrink card slightly on tablets */
+    .dev-card {
+        width: 280px;
+        height: 380px;
+    }
+
+    .dev-image-wrapper {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Smaller mobile devices */
+    .developer-section {
+        padding: 30px 10px 20px;
+    }
+
+    .dev-heading {
+        font-size: 1.4rem;
+        margin-bottom: 25px;
+    }
+
+    .dev-card {
+        width: 100%;
+        max-width: 260px;
+        /* Keep it from being too wide */
+        height: 350px;
+    }
+
+    .dev-card-front,
+    .dev-card-back {
+        padding: 20px;
+    }
+
+    .dev-name {
+        font-size: 1.2rem;
+    }
+
+    .dev-details {
+        font-size: 0.9rem;
+    }
+
+    .connect-text {
+        font-size: 1.2rem;
+    }
+}

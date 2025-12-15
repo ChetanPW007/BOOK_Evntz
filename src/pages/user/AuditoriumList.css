@@ -1,0 +1,156 @@
+/* Auditorium List Page */
+.auditorium-list-page {
+    min-height: 100vh;
+    background: #050505;
+    padding: 40px 20px;
+}
+
+.auditorium-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(250, 227, 140, 0.3);
+    color: #fae38c;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 30px;
+}
+
+.back-btn:hover {
+    background: rgba(250, 227, 140, 0.1);
+    border-color: rgba(250, 227, 140, 0.6);
+    transform: translateX(-4px);
+}
+
+.page-title {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #fae38c, #f9d56e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    color: #aaa;
+    font-size: 1.1rem;
+    margin: 0 0 40px 0;
+}
+
+.auditorium-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.auditorium-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+    border: 2px solid rgba(250, 227, 140, 0.2);
+    border-radius: 16px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.auditorium-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(250, 227, 140, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.auditorium-card:hover {
+    border-color: rgba(250, 227, 140, 0.6);
+    transform: translateY(-6px);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(250, 227, 140, 0.2);
+}
+
+.auditorium-card:hover::before {
+    opacity: 1;
+}
+
+.audi-icon {
+    font-size: 3rem;
+    filter: grayscale(0.4);
+    transition: all 0.3s;
+}
+
+.auditorium-card:hover .audi-icon {
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.audi-info {
+    flex: 1;
+}
+
+.audi-name {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.audi-action {
+    color: #fae38c;
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.auditorium-card:hover .audi-action {
+    opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .auditorium-list-page {
+        padding: 20px 15px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .auditorium-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .auditorium-card {
+        padding: 20px;
+    }
+
+    .audi-icon {
+        font-size: 2.5rem;
+    }
+
+    .audi-name {
+        font-size: 1.2rem;
+    }
+}

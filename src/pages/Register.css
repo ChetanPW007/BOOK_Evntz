@@ -1,0 +1,56 @@
+.register-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #590000, #2d0202);
+}
+
+.register-box {
+  width: 450px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(250, 227, 140, 0.2);
+  border-radius: 14px;
+  backdrop-filter: blur(7px);
+  text-align: center;
+  color: white;
+}
+
+.register-box h2 {
+  color: #FAE38C;
+  margin-bottom: 20px;
+}
+
+.register-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: #FAE38C;
+  color: black;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.register-btn:hover {
+  background: #ffda47;
+}
+
+.register-box p {
+  margin-top: 10px;
+  color: #e6e6e6;
+}
+
+.register-box a {
+  color: #FAE38C;
+}
