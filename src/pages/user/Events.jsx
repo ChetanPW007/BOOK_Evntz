@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./events.css";
 import EventCard from "../../components/EventCard";
 import Loading from "../../components/Loading";
 
