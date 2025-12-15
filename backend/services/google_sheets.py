@@ -14,7 +14,25 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapi
 
 class GoogleSheets:
     def __init__(self):
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        import os
+        import json
+        
+        # Check for environment variable (Production / Vercel)
+        json_creds = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+        
+        if json_creds:
+            try:
+                creds_dict = json.loads(json_creds)
+                creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+                print("Authenticated via Environment Variable")
+            except Exception as e:
+                print(f"Failed to load credentials from Env Var: {e}")
+                raise e
+        else:
+            # Fallback to local file (Local Development)
+            print(f"Authenticating via file: {SERVICE_ACCOUNT_FILE}")
+            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            
         client = gspread.authorize(creds)
         self.sheet = client.open_by_key(SPREADSHEET_ID)
 
