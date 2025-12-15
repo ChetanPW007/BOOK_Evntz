@@ -7,6 +7,39 @@ import "./UserHome.css";
 import Loading from "../../components/Loading";
 import DeveloperSection from "../../components/DeveloperSection";
 
+// Convert "A, B, C" → ["A", "B", "C"]
+const toArray = (value) => {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  return value
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+};
+
+// Normalize event object from Google Sheet
+const normalizeEvent = (ev, i) => ({
+  id: ev.ID || ev.id || `EV${i + 1}`,
+  name: ev.Name || ev.name || "Untitled Event",
+  auditorium: ev.Auditorium || ev.auditorium || "",
+  date: ev.Date || ev.date || "",
+  time: ev.Time || ev.time || "",
+  college: ev.College || ev.college || "",
+  capacity: ev.Capacity || ev.capacity || "",
+  poster:
+    ev.Poster && ev.Poster.trim() !== "" ? ev.Poster : "/assets/default.jpg",
+
+  speakers: toArray(ev.Speakers || ev.speakers),
+  coordinators: toArray(ev.Coordinators || ev.coordinators),
+
+  // Feature Flag
+  isFeatured: (String(ev.Featured).toLowerCase() === "true" || ev.isFeatured === true),
+
+  // Raw Data for logic
+  Schedules: ev.Schedules,
+  Visibility: ev.Visibility
+});
+
 export default function UserHome() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -24,15 +57,7 @@ export default function UserHome() {
   // Pagination for mobile
   const [visibleCards, setVisibleCards] = useState(6); // Show 6 initially (3 rows × 2)
 
-  // Convert "A, B, C" → ["A", "B", "C"]
-  const toArray = (value) => {
-    if (!value) return [];
-    if (Array.isArray(value)) return value;
-    return value
-      .split(",")
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-  };
+
 
   useEffect(() => {
     const checkUser = () => {
@@ -58,28 +83,7 @@ export default function UserHome() {
     checkUser();
   }, [navigate]);
 
-  // Normalize event object from Google Sheet
-  const normalizeEvent = (ev, i) => ({
-    id: ev.ID || ev.id || `EV${i + 1}`,
-    name: ev.Name || ev.name || "Untitled Event",
-    auditorium: ev.Auditorium || ev.auditorium || "",
-    date: ev.Date || ev.date || "",
-    time: ev.Time || ev.time || "",
-    college: ev.College || ev.college || "",
-    capacity: ev.Capacity || ev.capacity || "",
-    poster:
-      ev.Poster && ev.Poster.trim() !== "" ? ev.Poster : "/assets/default.jpg",
 
-    speakers: toArray(ev.Speakers || ev.speakers),
-    coordinators: toArray(ev.Coordinators || ev.coordinators),
-
-    // Feature Flag
-    isFeatured: (String(ev.Featured).toLowerCase() === "true" || ev.isFeatured === true),
-
-    // Raw Data for logic
-    Schedules: ev.Schedules,
-    Visibility: ev.Visibility
-  });
 
   // Session handling merged above
 

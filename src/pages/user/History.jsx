@@ -171,8 +171,6 @@ export default function History() {
           seats,
           poster,
           bookedOn,
-          poster,
-          bookedOn,
           schedule,
           eventDate,
           auditorium, // Include auditorium
@@ -294,7 +292,7 @@ export default function History() {
                   key={id}
                   className="history-card"
                   role="button"
-                  onClick={() => navigate(`/ticket/${encodeURIComponent(id)}`)}
+                  onClick={() => navigate(`/ticket/${encodeURIComponent(id)}`, { state: { ticket: b } })}
                 >
                   <div className="strip-pulse" />
 
@@ -337,7 +335,7 @@ export default function History() {
                       <button
                         onClick={(ev) => {
                           ev.stopPropagation();
-                          navigate(`/ticket/${encodeURIComponent(id)}`);
+                          navigate(`/ticket/${encodeURIComponent(id)}`, { state: { ticket: b } });
                         }}
                         className="history-btn"
                       >

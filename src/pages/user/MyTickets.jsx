@@ -146,6 +146,14 @@ export default function MyTickets() {
                   <strong>USN: </strong>
                   {t.usn || "—"}
                 </p>
+
+                {/* Auditorium Display */}
+                {(t.auditorium || t.Auditorium || t.venue) && (
+                  <p>
+                    <strong>Venue: </strong>
+                    {t.auditorium || t.Auditorium || t.venue}
+                  </p>
+                )}
               </div>
 
               {/* Actions */}

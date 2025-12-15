@@ -1,0 +1,115 @@
+
+C:\Users\cheta\college-auditorium\backend\.venv\Lib\site-packages\werkzeug\debug\shared\debugger.js
+    2:8   error  'EVALEX_TRUSTED' is not defined  no-undef
+    6:7   error  'CONSOLE_MODE' is not defined    no-undef
+    6:23  error  'EVALEX' is not defined          no-undef
+   11:7   error  'EVALEX' is not defined          no-undef
+   42:19  error  'SECRET' is not defined          no-undef
+   60:13  error  'EVALEX_TRUSTED' is not defined  no-undef
+   83:8   error  'EVALEX_TRUSTED' is not defined  no-undef
+  161:9   error  'EVALEX' is not defined          no-undef
+
+C:\Users\cheta\college-auditorium\backend\venv\Lib\site-packages\werkzeug\debug\shared\debugger.js
+    2:8   error  'EVALEX_TRUSTED' is not defined  no-undef
+    6:7   error  'CONSOLE_MODE' is not defined    no-undef
+    6:23  error  'EVALEX' is not defined          no-undef
+   11:7   error  'EVALEX' is not defined          no-undef
+   42:19  error  'SECRET' is not defined          no-undef
+   60:13  error  'EVALEX_TRUSTED' is not defined  no-undef
+   83:8   error  'EVALEX_TRUSTED' is not defined  no-undef
+  161:9   error  'EVALEX' is not defined          no-undef
+
+C:\Users\cheta\college-auditorium\src\components\EventModal.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\components\FeaturedSlider.jsx
+   3:10  error    'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                no-unused-vars
+  15:5   error    React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  20:8   warning  React Hook useEffect has a missing dependency: 'nextSlide'. Either include it or remove the dependency array                                                                                 react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\components\ProfileDropdown.jsx
+  5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\components\SeatBookingPage.jsx
+   16:3  error    'onConfirm' is assigned a value but never used                                                                   no-unused-vars
+   18:9  error    'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                         no-unused-vars
+  127:6  warning  React Hook useEffect has a missing dependency: 'seatStoreKey'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\components\admin\SeatLayoutEditor.jsx
+  46:8  warning  React Hook useEffect has a missing dependency: 'createEmptyGrid'. Either include it or remove the dependency array                                                        react-hooks/exhaustive-deps
+  53:8  warning  React Hook useEffect has missing dependencies: 'cols', 'createEmptyGrid', 'grid.length', 'initialLayout', and 'rows'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\pages\admin\AdminAuditoriums.jsx
+  89:18  error  'e' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\admin\AdminBookings.jsx
+   93:45  error    'color:' is defined but never used                                                                       no-unused-labels
+  149:14  error    'e' is defined but never used                                                                            no-unused-vars
+  179:14  error    'err' is defined but never used                                                                          no-unused-vars
+  248:6   warning  React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  371:9   error    'handleNewBooking' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u         no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\admin\AdminDashboard.jsx
+  10:6  warning  React Hook useEffect has a missing dependency: 'fetchAll'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\pages\admin\AdminEvents.jsx
+    1:31  error    'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                      no-unused-vars
+  118:10  error    'addPersonType' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                      no-unused-vars
+  152:10  error    'showAudiModal' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                      no-unused-vars
+  153:10  error    'showCoordinatorModal' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u               no-unused-vars
+  153:32  error    'setShowCoordinatorModal' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u            no-unused-vars
+  156:10  error    'validating' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                         no-unused-vars
+  198:70  error    Empty block statement                                                                                              no-empty
+  277:6   warning  React Hook useEffect has a missing dependency: 'checkConflicts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  294:9   error    'handleAuditoriumChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u             no-unused-vars
+  442:11  error    'primaryAuditorium' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                  no-unused-vars
+  483:9   error    'isHidden' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\admin\AdminUsers.jsx
+  2:18  error  'apiPut' is defined but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  2:26  error  'apiDelete' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\admin\VolunteerScanner.jsx
+  52:14  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\user\AuditoriumEvents.jsx
+  46:37  error  Empty block statement  no-empty
+
+C:\Users\cheta\college-auditorium\src\pages\user\EventDetails.jsx
+   44:11  error    'lastElem' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                               no-unused-vars
+   63:14  error    'e' is defined but never used                                                                                          no-unused-vars
+  279:6   warning  React Hook useEffect has a missing dependency: 'selectedAuditorium'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\pages\user\Events.jsx
+  115:6  warning  React Hook useEffect has a missing dependency: 'normalizeEvent'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\pages\user\History.jsx
+  82:20  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\user\MyTickets.jsx
+  53:18  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\user\SeatBooking.jsx
+  174:8   warning  React Hook useEffect has a missing dependency: 'location.state?.event'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  233:15  error    'isCustomLayout' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                            no-unused-vars
+  311:13  error    Unexpected constant condition                                                                                             no-constant-condition
+  516:66  error    'e' is defined but never used                                                                                             no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\pages\user\SuccessPage.jsx
+  20:6  warning  React Hook useEffect has a missing dependency: 'navigate'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\cheta\college-auditorium\src\pages\user\TicketPage.jsx
+  147:17  error  Empty block statement  no-empty
+
+C:\Users\cheta\college-auditorium\src\pages\user\UserHome.jsx
+  136:16  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\routes\AdminRoute.jsx
+  17:12  error  'err' is defined but never used  no-unused-vars
+
+C:\Users\cheta\college-auditorium\src\store\adminStore.js
+  4:43  error  'get' is defined but never used  no-unused-vars
+
+✖ 63 problems (52 errors, 11 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
