@@ -6,6 +6,7 @@ import FeaturedSlider from "../../components/FeaturedSlider";
 import "./UserHome.css";
 import Loading from "../../components/Loading";
 import DeveloperSection from "../../components/DeveloperSection";
+import { apiGet } from "../../utils/api";
 
 // Convert "A, B, C" → ["A", "B", "C"]
 const toArray = (value) => {
@@ -94,8 +95,7 @@ export default function UserHome() {
 
       try {
         // Fetch Events
-        const resEvents = await fetch("http://127.0.0.1:5000/api/events/");
-        const dataEvents = await resEvents.json();
+        const dataEvents = await apiGet("/events/");
 
         if (dataEvents.status === "success") {
           const visibleEvents = dataEvents.events.filter(
@@ -121,8 +121,7 @@ export default function UserHome() {
         }
 
         // Fetch Auditoriums
-        const resAudi = await fetch("http://127.0.0.1:5000/api/auditoriums/");
-        const dataAudi = await resAudi.json();
+        const dataAudi = await apiGet("/auditoriums/");
 
         if (dataAudi.status === "success") {
           // Filter: Status == Active AND has future events

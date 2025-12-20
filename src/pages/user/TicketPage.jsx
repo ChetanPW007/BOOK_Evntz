@@ -4,6 +4,7 @@ import { useParams, useLocation } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "./TicketPage.css";
+import { apiGet } from "../../utils/api";
 
 export default function TicketPage() {
   const { ticketId, id } = useParams();
@@ -61,17 +62,7 @@ export default function TicketPage() {
           return;
         }
 
-        const res = await fetch(`/api/bookings/user/${encodeURIComponent(usn)}`);
-        const text = await res.text();
-
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          console.error("Non-JSON backend response:", text);
-          setBooking(null);
-          return;
-        }
+        const data = await apiGet(`/bookings/user/${encodeURIComponent(usn)}`);
 
         if (!data.success || !Array.isArray(data.data)) {
           setBooking(null);

@@ -15,14 +15,18 @@ app = Flask(__name__)
 # ---------------------------
 # CORS Configuration
 # ---------------------------
-# Allow requests from React dev server, Vercel deployment, and any origin (for development)
 # In production, you should restrict this to specific domains
-ALLOWED_ORIGINS = "*"  # Allow all origins for now
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://turbo007.pythonanywhere.com",
+    # Add your Vercel URL here
+]
 
 CORS(
     app,
-    resources={r"/*": {"origins": ALLOWED_ORIGINS}},  # Allow all routes, not just /api/*
-    supports_credentials=False,  # Set to False when using wildcard origins
+    resources={r"/*": {"origins": ALLOWED_ORIGINS}},
+    supports_credentials=True,
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )

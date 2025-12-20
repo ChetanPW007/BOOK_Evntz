@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SeatBookingPage.css";
+import { apiPost } from "../utils/api";
 
 function defaultSeatLabel(r, c) {
   return `${String.fromCharCode(65 + r)}${c + 1}`;
@@ -173,13 +174,7 @@ export default function SeatBookingPage({
         poster: event?.poster,
       };
 
-      const res = await fetch("https://turbo007.pythonanywhere.com/api/bookings/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingPayload),
-      });
-
-      const data = await res.json();
+      const data = await apiPost("/bookings/create", bookingPayload);
 
       if (!data.success) {
         setMessage(data.message || "Booking failed.");

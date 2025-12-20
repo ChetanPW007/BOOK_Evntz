@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import "./UserProfile.css";
+import { apiGet } from "../../../utils/api";
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -22,9 +23,8 @@ export default function UserProfile() {
           return;
         }
 
-        // Use relative path to leverage Vite proxy
-        const res = await fetch(`/api/users/${storedUser.usn}`);
-        const data = await res.json();
+        // Use centralized apiGet
+        const data = await apiGet(`/users/${storedUser.usn}`);
 
         if (data.status === "success" && data.user) {
           setUser(data.user);

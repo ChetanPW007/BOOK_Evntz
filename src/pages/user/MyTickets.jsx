@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MyTickets.css";
+import { apiGet } from "../../utils/api";
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -48,17 +49,7 @@ export default function MyTickets() {
       }
 
       try {
-        const res = await fetch(`/api/bookings/user/${encodeURIComponent(usn)}`);
-        const text = await res.text();
-
-        let data = null;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("Non-JSON server response:", text);
-          setTickets([]);
-          return;
-        }
+        const data = await apiGet(`/bookings/user/${encodeURIComponent(usn)}`);
 
         if (data.success && Array.isArray(data.data)) {
           setTickets([...data.data].reverse()); // newest → oldest

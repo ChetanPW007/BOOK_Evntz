@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./EventDetail.css";
+import { apiGet } from "../../utils/api";
 
 /* ------------------------------ Helpers ------------------------------ */
 
@@ -139,8 +140,7 @@ export default function EventDetails() {
 
       try {
         // STEP 1: Fetch event by ID
-        const eventRes = await fetch(`http://127.0.0.1:5000/api/events/`);
-        const eventData = await eventRes.json();
+        const eventData = await apiGet("/events/");
 
         if (!eventData.status || eventData.status !== "success") {
           throw new Error("Failed to fetch events");
@@ -159,8 +159,8 @@ export default function EventDetails() {
 
         // STEP 2: Fetch coordinators and speakers data
         const [cRes, sRes] = await Promise.all([
-          fetch("http://127.0.0.1:5000/api/events/coordinators").then(r => r.json()),
-          fetch("http://127.0.0.1:5000/api/events/speakers").then(r => r.json())
+          apiGet("/events/coordinators"),
+          apiGet("/events/speakers")
         ]);
 
         const allCoords = cRes.data || [];

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
 import "./History.css";
+import { BASE } from "../../utils/api";
 
 export default function History() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function History() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
   // ------------------ Backend URL ------------------
-  const backendRoot = "https://turbo007.pythonanywhere.com/api";
+  const backendRoot = BASE;
 
   // ------------------ HELPER ------------------
   // ------------------ HELPER ------------------

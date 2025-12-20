@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import "./Login.css";
+import { apiPost } from "../utils/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
 
-  const backendURL = "https://turbo007.pythonanywhere.com/api/users";
+
 
   const [form, setForm] = useState({
     name: "",
@@ -70,15 +71,9 @@ export default function Login() {
           ? { role: "admin", loginId: usn, password } // backend expects "loginId" for admin
           : { role: "user", loginId: phone, password }; // backend expects "loginId" for user
 
-      const res = await fetch(`${backendURL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const data = await apiPost("/users/login", body);
 
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok || !data || data.status !== "success") {
+      if (!data || data.status !== "success") {
         showToast("error", data?.message || "Invalid credentials");
         setLoading(false);
         return;
@@ -129,23 +124,17 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${backendURL}/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          usn,
-          branch,
-          sem,
-          phone,
-          college,
-          password,
-          role: "user", // force role as user
-        }),
+      const data = await apiPost("/users/add", {
+        name,
+        email,
+        usn,
+        branch,
+        sem,
+        phone,
+        college,
+        password,
+        role: "user", // force role as user
       });
-
-      const data = await res.json();
 
       if (data.status === "success") {
         showToast("success", "Registration successful! Please login.");

@@ -1,12 +1,28 @@
-// Use environment variable for API base URL
-// In development: defaults to "/api" (uses Vite proxy)
-// In production: set VITE_API_BASE_URL in Vercel env vars to your backend URL
+// Determined the backend base URL
+const getBaseURL = () => {
+  // 1. Check if VITE_API_BASE_URL is explicitly set (e.g. in Vercel or .env)
+  let url = import.meta.env.VITE_API_BASE_URL || "";
 
-// Force backend URL for now (with /api prefix)
-const BASE = "https://turbo007.pythonanywhere.com/api";
+  // 2. If not set, and we are on localhost, default to local backend
+  if (!url && typeof window !== "undefined" && window.location.hostname === "localhost") {
+    url = "http://localhost:5000";
+  }
+
+  // 3. If still not set, default to relative "/api" (Vite proxy)
+  if (!url) return "/api";
+
+  // 4. Ensure it has the /api suffix if it doesn't already
+  // but don't append if it's already there
+  const trimmed = url.replace(/\/$/, "");
+  if (!trimmed.endsWith("/api")) {
+    return trimmed + "/api";
+  }
+  return trimmed;
+};
+
+export const BASE = getBaseURL();
 
 console.log("🔧 API Base URL:", BASE);
-console.log("🔧 Env variable:", import.meta.env.VITE_API_BASE_URL);
 
 async function request(path, opts = {}) {
   const url = BASE + path;

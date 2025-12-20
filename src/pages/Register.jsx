@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import axios from "axios";
+import { apiPost } from "../utils/api";
 import Toast from "../components/Toast";
 import "./Register.css";
 
@@ -18,7 +18,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
 
-  const backendURL = "http://127.0.0.1:5000/api/users";
+
 
   // -------------------------
   // Toast helpers
@@ -58,12 +58,12 @@ export default function Register() {
     console.log("➡️ Sending payload:", formData);
 
     try {
-      const response = await axios.post(`${backendURL}/add`, {
+      const response = await apiPost("/users/add", {
         ...formData,
         role: "user", // force role as user
       });
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
         showToast("success", "Registration successful! Please login.");
         setFormData({
           name: "",
@@ -80,11 +80,11 @@ export default function Register() {
           window.location.href = "/login";
         }, 1000);
       } else {
-        showToast("error", response.data.message || "Registration failed");
+        showToast("error", response.message || "Registration failed");
       }
     } catch (err) {
       console.error("Registration error:", err);
-      showToast("error", err.response?.data?.message || "Server error");
+      showToast("error", "Server error");
     } finally {
       setLoading(false);
     }

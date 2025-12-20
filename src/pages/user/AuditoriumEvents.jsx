@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import EventCard from "../../components/EventCard";
 import Loading from "../../components/Loading";
 import "./AuditoriumEvents.css";
+import { apiGet } from "../../utils/api";
 
 export default function AuditoriumEvents() {
     const { name } = useParams();
@@ -15,8 +16,7 @@ export default function AuditoriumEvents() {
         async function loadData() {
             try {
                 // Fetch Auditorium Details
-                const resAudi = await fetch("http://127.0.0.1:5000/api/auditoriums/");
-                const audiData = await resAudi.json();
+                const audiData = await apiGet("/auditoriums/");
 
                 if (audiData.status === "success") {
                     const found = audiData.data.find(
@@ -26,8 +26,7 @@ export default function AuditoriumEvents() {
                 }
 
                 // Fetch Events
-                const resEvents = await fetch("http://127.0.0.1:5000/api/events/");
-                const evData = await resEvents.json();
+                const evData = await apiGet("/events/");
 
                 if (evData.status === "success") {
                     // Filter: This Auditorium + Visible + Future
