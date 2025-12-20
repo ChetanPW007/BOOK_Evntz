@@ -2,7 +2,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
 from backend.config import (
-    SERVICE_ACCOUNT_FILE, SPREADSHEET_ID,
+    get_google_credentials, SPREADSHEET_ID,
     SHEET_USERS, SHEET_EVENTS, SHEET_BOOKINGS,
     SHEET_SPEAKERS, SHEET_COORDINATORS, SHEET_ATTENDANCE,
     SHEET_AUDITORIUMS
@@ -14,24 +14,18 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapi
 
 class GoogleSheets:
     def __init__(self):
-        import os
-        import json
+        # Use the centralized credentials helper
+        creds_dict = get_google_credentials()
         
-        # Check for environment variable (Production / Vercel)
-        json_creds = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+        if not creds_dict:
+            raise Exception("Failed to load Google Sheets credentials. Check your config.")
         
-        if json_creds:
-            try:
-                creds_dict = json.loads(json_creds)
-                creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
-                print("Authenticated via Environment Variable")
-            except Exception as e:
-                print(f"Failed to load credentials from Env Var: {e}")
-                raise e
-        else:
-            # Fallback to local file (Local Development)
-            print(f"Authenticating via file: {SERVICE_ACCOUNT_FILE}")
-            creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        try:
+            creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+            print("✅ Google Sheets authenticated successfully")
+        except Exception as e:
+            print(f"❌ Failed to authenticate with Google Sheets: {e}")
+            raise e
             
         client = gspread.authorize(creds)
         self.sheet = client.open_by_key(SPREADSHEET_ID)
