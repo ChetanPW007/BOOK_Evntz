@@ -95,7 +95,8 @@ def add_event():
                 
                 print(f"DEBUG: Saved poster to: {file_path}", flush=True)
                 # URL to store
-                ev["Poster"] = f"http://localhost:5000/static/uploads/{filename}"
+                base_url = request.host_url.rstrip('/')
+                ev["Poster"] = f"{base_url}/static/uploads/{filename}"
                 print(f"DEBUG: New Poster URL: {ev['Poster']}", flush=True)
                 
             except Exception as e:
@@ -141,7 +142,8 @@ def add_event():
                             with open(path, "wb") as f:
                                 f.write(base64.b64decode(encoded))
                             
-                            sp["image"] = f"http://localhost:5000/static/uploads/{fn}"
+                            base_url = request.host_url.rstrip('/')
+                            sp["image"] = f"{base_url}/static/uploads/{fn}"
                         except Exception as e:
                             print(f"Speaker Image Save Error: {e}")
                             sp["image"] = "" # clear invalid base64
@@ -192,7 +194,8 @@ def add_event():
                             with open(path, "wb") as f:
                                 f.write(base64.b64decode(encoded))
                             
-                            coord["image"] = f"http://localhost:5000/static/uploads/{fn}"
+                            base_url = request.host_url.rstrip('/')
+                            coord["image"] = f"{base_url}/static/uploads/{fn}"
                         except Exception as e:
                             print(f"Coordinator Image Save Error: {e}")
                             coord["image"] = "" # clear invalid base64
@@ -433,7 +436,8 @@ def add_speaker():
             with open(path, "wb") as f:
                 f.write(base64.b64decode(encoded))
             
-            data["image"] = f"http://localhost:5000/static/uploads/{fn}"
+            base_url = request.host_url.rstrip('/')
+            data["image"] = f"{base_url}/static/uploads/{fn}"
         except Exception:
             data["image"] = ""
 
@@ -476,7 +480,8 @@ def add_coordinator_endpoint():
             with open(path, "wb") as f:
                 f.write(base64.b64decode(encoded))
             
-            data["image"] = f"http://localhost:5000/static/uploads/{fn}"
+            base_url = request.host_url.rstrip('/')
+            data["image"] = f"{base_url}/static/uploads/{fn}"
         except Exception:
             data["image"] = ""
 
