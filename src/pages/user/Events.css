@@ -28,7 +28,7 @@
 }
 
 /* Mobile Fine-tuning */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .events-page {
     padding: 20px;
   }
@@ -39,16 +39,17 @@
   }
 
   .event-grid {
-    /* Mobile: 2 columns if space permits, else 1 */
+    /* Tablet: 2 columns */
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 20px;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .event-grid {
     grid-template-columns: 1fr;
-    /* Single column on very small screens */
+    /* Single column on mobile phones */
+    gap: 15px;
   }
 }
 
@@ -57,6 +58,7 @@
   /* Keep global button styles if needed, but EventCard has its own scoped class */
   cursor: pointer;
 }
+
 /* =============================================
    AUDITORIUM SHOWCASE SECTION
 ============================================= */
@@ -84,8 +86,13 @@
 }
 
 @keyframes audiShine {
-  0% { transform: translateX(-150%) skewX(-25deg); }
-  100% { transform: translateX(150%) skewX(-25deg); }
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+
+  100% {
+    transform: translateX(150%) skewX(-25deg);
+  }
 }
 
 .auditorium-card {
@@ -96,9 +103,9 @@
   padding: 1.5rem;
   cursor: pointer;
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
-              box-shadow 0.3s ease, 
-              border-color 0.3s;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -109,12 +116,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent 30%,
-    rgba(250, 227, 140, 0.15) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(120deg,
+      transparent 30%,
+      rgba(250, 227, 140, 0.15) 50%,
+      transparent 70%);
   transform: translateX(-150%) skewX(-25deg);
   transition: none;
   z-index: 1;
@@ -165,6 +170,7 @@
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

@@ -123,41 +123,104 @@ export default function TicketPage() {
 
   // Helper to normalize data structure
   const normalizeBooking = (found) => {
+    // --- Parse Event Date ---
+    const rawDate = found.date || found.Date || found.eventDate || found.EventDate || "";
+    let formattedDate = rawDate;
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        formattedDate = d.toLocaleDateString('en-US', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      }
+    }
+
+    // --- Parse Event Time (12h format) ---
+    // --- Parse Event Time (12h format) ---
+    let rawTime = found.time || found.Time || found.schedule || found.Schedule || found.show || found.showTime || "TBD";
+    if (typeof rawTime !== 'string') rawTime = String(rawTime);
+
+    let formattedTime = rawTime;
+
+    try {
+      // Clean up common issues
+      rawTime = rawTime.trim();
+
+      // Case 1: ISO String-like (contains T)
+      if (rawTime.includes("T")) {
+        const d = new Date(rawTime);
+        if (!isNaN(d.getTime())) {
+          formattedTime = d.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+        } else {
+          // Fallback: manually split T
+          const parts = rawTime.split('T');
+          if (parts.length > 1) {
+            const timePart = parts[1].split('.')[0]; // remove milliseconds
+            const [h, m] = timePart.split(':');
+            const d2 = new Date();
+            d2.setHours(h, m);
+            formattedTime = d2.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+          }
+        }
+      }
+      // Case 2: "YYYY-MM-DD HH:MM"
+      else if (rawTime.includes("-") && rawTime.includes(":")) {
+        const d = new Date(rawTime);
+        if (!isNaN(d.getTime())) {
+          formattedTime = d.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+        }
+      }
+      // Case 3: Simple "HH:MM"
+      else if (rawTime.includes(":")) {
+        const [h, m] = rawTime.split(":");
+        if (!isNaN(h)) {
+          const d = new Date();
+          d.setHours(parseInt(h), parseInt(m));
+          formattedTime = d.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+        }
+      }
+    } catch (e) { console.error("Time parsing error", e); }
+
     return {
+      ...found,
       bookingId: found.bookingId || found.BookingID || found.id || `BK-${Date.now()}`,
       eventName: found.eventName || found.EventName || found.event || found.title || "Event",
       seats: (typeof (found.seats || found.Seats || found.seat) === 'string')
         ? (found.seats || found.Seats || found.seat).split(',').map(s => s.trim())
         : (found.seats || found.Seats || found.seat || []),
-      schedule: (() => {
-        const val = found.schedule || found.Schedule || found.show || found.showTime || found.time || "TBD";
-        try {
-          if (val.includes("T")) {
-            const d = new Date(val);
-            if (!isNaN(d.getTime())) return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-          }
-          if (val.includes(":")) {
-            const [h, m] = val.split(":");
-            if (!isNaN(h)) {
-              const d = new Date();
-              d.setHours(h, m);
-              return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-            }
-          }
-        } catch { }
-        return val;
-      })(),
+
+      // Use the formatted time we calculated
+      schedule: formattedTime,
+
+      // Keep original logic for sorting/reference if needed, but we used separate fields
+      eventDateFormatted: formattedDate,
+
       bookedOn: found.Timestamp
         ? new Date(Number(found.Timestamp) * 1000).toLocaleString()
         : (found.bookedOn || new Date().toLocaleString()),
+
       poster:
         found.poster ||
         found.eventImage ||
         found.image ||
         "/assets/default.jpg",
-      auditorium: found.Auditorium || found.auditorium || found.venue || "", // Add auditorium
+      auditorium: found.Auditorium || found.auditorium || found.venue || "Main Auditorium", // Fallback if missing
       usn: found.usn || found.usn || found.USN || found.usnNo || "",
-      ...found,
     };
   };
 
@@ -309,8 +372,12 @@ Booking ID: ${booking.bookingId}`;
             </div>
             <div className="t-field">
               <label>Date</label>
-              <span className="small-text">{booking.bookedOn}</span>
+              <span>{booking.eventDateFormatted || booking.bookedOn.split(',')[0]}</span>
             </div>
+          </div>
+
+          <div className="t-booked-on">
+            <small>Booked: {booking.bookedOn}</small>
           </div>
 
           <div className="ticket-qr-section">

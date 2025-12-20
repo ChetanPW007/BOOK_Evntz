@@ -3,7 +3,7 @@
 ========================================================== */
 .login-wrapper {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background: radial-gradient(circle at top, #3a0000, #0a0000 70%);
   display: flex;
   flex-direction: column;
@@ -12,14 +12,15 @@
   color: white;
   position: relative;
   overflow: hidden;
+  padding: 2rem 1rem;
 }
 
 /* Soft lighting spotlight */
 .login-wrapper::before {
   content: "";
   position: absolute;
-  width: 480px;
-  height: 480px;
+  width: min(480px, 80vw);
+  height: min(480px, 80vw);
   background: rgba(255, 215, 130, 0.07);
   border-radius: 50%;
   filter: blur(120px);
@@ -30,8 +31,8 @@
 .login-wrapper::after {
   content: "";
   position: absolute;
-  width: 380px;
-  height: 380px;
+  width: min(380px, 70vw);
+  height: min(380px, 70vw);
   background: rgba(255, 0, 120, 0.08);
   border-radius: 50%;
   filter: blur(140px);
@@ -43,15 +44,22 @@
    LOGO
 ========================================================== */
 .login-logo {
-  width: 120px;
-  margin-bottom: 20px;
+  width: clamp(90px, 20vw, 120px);
+  margin-bottom: 1.25rem;
   filter: drop-shadow(0 0 10px rgba(250, 227, 140, 0.3));
   animation: fadeSlide 0.7s ease forwards;
 }
 
 @keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================
@@ -59,20 +67,24 @@
 ========================================================== */
 .role-toggle {
   display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: clamp(6px, 2vw, 12px);
+  margin-bottom: 1.125rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .role-toggle button {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
-  padding: 8px 18px;
+  padding: 0.5rem 1.125rem;
   border-radius: 999px;
   backdrop-filter: blur(6px);
   cursor: pointer;
   transition: 0.25s ease;
   font-weight: 500;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  min-height: 44px;
 }
 
 .role-toggle button:hover {
@@ -94,21 +106,22 @@
 .form-box {
   display: flex;
   flex-direction: column;
-  width: 330px;
-  gap: 14px;
-  margin-top: 10px;
+  width: min(330px, 90vw);
+  gap: 0.875rem;
+  margin-top: 0.625rem;
   animation: fadeIn 0.5s ease forwards;
 }
 
 /* Premium Inputs */
 .form-box input {
-  padding: 13px;
+  padding: 0.8125rem 1rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.95);
   border: none;
-  font-size: 14px;
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
   outline: none;
   transition: 0.25s ease;
+  min-height: 44px;
 }
 
 .form-box input:focus {
@@ -126,13 +139,15 @@
 .secure-login-btn {
   background: linear-gradient(135deg, #fae38c, #e0c165);
   color: black;
-  padding: 12px;
+  padding: 0.75rem 1rem;
   border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
   border: none;
   box-shadow: 0 0 15px rgba(250, 227, 140, 0.45);
   transition: 0.25s ease;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  min-height: 48px;
 }
 
 .secure-login-btn:hover {
@@ -153,14 +168,16 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.25);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   border-top-color: #000;
   animation: spin 0.9s linear infinite;
   vertical-align: middle;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==========================================================
@@ -168,12 +185,16 @@
 ========================================================== */
 .forgot {
   text-align: center;
-  font-size: 12px;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
   color: #fae38c;
   cursor: pointer;
-  margin-top: 6px;
+  margin-top: 0.375rem;
   opacity: 0.8;
   transition: 0.25s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .forgot:hover {
@@ -186,27 +207,65 @@
 ========================================================== */
 .gmu-toast-wrapper {
   position: fixed;
-  right: 20px;
-  top: 85px;
+  right: clamp(10px, 3vw, 20px);
+  top: clamp(70px, 15vh, 85px);
   z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  max-width: 90vw;
 }
 
 /* ==========================================================
    MOBILE RESPONSIVE
 ========================================================== */
-@media (max-width: 420px) {
+@media (max-width: 768px) {
+  .login-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
   .form-box {
-    width: 90%;
+    width: min(320px, 92vw);
+    gap: 0.75rem;
   }
 
   .role-toggle {
-    gap: 6px;
+    gap: 0.5rem;
+  }
+
+  .role-toggle button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 1rem 0.75rem;
   }
 
   .login-logo {
-    width: 105px;
+    width: clamp(80px, 25vw, 100px);
+    margin-bottom: 1rem;
+  }
+
+  .form-box {
+    width: 94vw;
+    gap: 0.625rem;
+  }
+
+  .form-box input {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .role-toggle button {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .secure-login-btn {
+    padding: 0.75rem;
+    font-size: 0.9375rem;
   }
 }

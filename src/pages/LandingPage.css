@@ -1,6 +1,7 @@
 .landing-container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  /* Changed to min-height for scrolling */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -10,6 +11,9 @@
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  /* Add padding for mobile edges */
 }
 
 /* Cinematic entrance effect */
@@ -31,11 +35,17 @@
   flex-direction: column;
   gap: 25px;
   align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  z-index: 10;
+  /* Ensure content is above overlay */
 }
 
 .logo-circle {
-  width: 380px;
-  height: 380px;
+  width: min(380px, 70vw);
+  /* Responsive width */
+  height: min(380px, 70vw);
+  /* Keep aspect ratio */
   border-radius: 50%;
   backdrop-filter: blur(20px);
   background: rgba(255, 255, 255, 0.08);
@@ -43,26 +53,36 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 0 30px rgba(250, 227, 140, 0.15);
 }
 
 .logo-img {
-  width: 260px;
+  width: 70%;
+  /* Relative to parent */
+  height: auto;
+  object-fit: contain;
 }
 
 .title {
-  font-size: 2.3rem;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  /* Fluid font size */
   color: #fae38c;
   font-weight: bold;
+  padding: 0 10px;
 }
 
 .about-card {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid #fae38c25;
-  padding: 18px;
-  width: 650px;
+  background: rgba(0, 0, 0, 0.65);
+  /* Slightly darker/more readable */
+  border: 1px solid rgba(250, 227, 140, 0.25);
+  padding: clamp(15px, 4vw, 25px);
+  width: min(650px, 94vw);
+  /* Responsive width */
   border-radius: 18px;
-  color: white;
+  color: #e0e0e0;
   backdrop-filter: blur(12px);
+  line-height: 1.6;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
 }
 
 .btn-gmu {
@@ -73,11 +93,15 @@
   border: none;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  font-size: 1rem;
+  color: #000;
+  box-shadow: 0 4px 15px rgba(250, 227, 140, 0.3);
 }
 
 .btn-gmu:hover {
-  transform: scale(1.12);
-  background-color: #ffd95a !important;
+  transform: scale(1.05);
+  background-color: #ffd95a;
+  box-shadow: 0 6px 20px rgba(250, 227, 140, 0.5);
 }
 
 /* Animations */
@@ -93,8 +117,8 @@
 /* Cinematic zoom effect on page load */
 @keyframes cinematicZoom {
   0% {
-    transform: scale(1.2);
-    filter: blur(10px);
+    transform: scale(1.1);
+    filter: blur(5px);
   }
 
   100% {
@@ -138,5 +162,21 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .logo-circle {
+    margin-top: 20px;
+  }
+
+  .content-wrapper {
+    gap: 15px;
+  }
+
+  .btn-gmu {
+    width: 100%;
+    max-width: 250px;
   }
 }

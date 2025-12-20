@@ -101,7 +101,7 @@ export default function AdminDashboard() {
           <h3 style={{ fontSize: '16px', marginBottom: '20px', color: '#fff' }}>User Distribution</h3>
 
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', firstName: '13px', color: '#aaa' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '13px', color: '#aaa' }}>
               <span>Users</span>
               <span>{Math.round((regular / totalU) * 100)}%</span>
             </div>

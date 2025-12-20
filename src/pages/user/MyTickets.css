@@ -153,51 +153,78 @@
 }
 
 /* === Responsive === */
+/* === Responsive === */
 @media (max-width: 768px) {
   .mt-card {
-    flex-direction: column;
+    /* Keep row layout but allow wrapping for dynamic sizing */
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    text-align: center;
+    text-align: left;
     padding: 12px;
+    gap: 12px;
+    height: auto;
+    /* Dynamic height */
   }
 
   .mt-poster {
+    /* Smaller poster for mobile list view */
     margin-right: 0;
-    margin-bottom: 10px;
-    width: 100px;
-    height: 140px;
+    margin-bottom: 0;
+    width: 70px;
+    height: 95px;
+    border-radius: 6px;
+  }
+
+  .mt-info {
+    min-width: 0;
+    /* Allow shrinking */
+  }
+
+  .mt-info h2 {
+    font-size: 16px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .mt-info p {
+    font-size: 12px;
+    margin: 2px 0;
+    line-height: 1.3;
   }
 
   .mt-actions {
-    flex-direction: row;
-    gap: 10px;
-    margin-left: 0;
-    justify-content: center;
-    margin-top: 10px;
+    /* Allow actions to wrap to bottom if needed */
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    margin-top: 0;
+    justify-content: flex-end;
+    /* If wrapped, take full width */
+    flex-grow: 1;
+    min-width: 140px;
+  }
+
+  .mt-view-btn,
+  .mt-open-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 }
 
 @media (max-width: 480px) {
   .mt-poster {
-    width: 90px;
-    height: 120px;
-  }
-
-  .mt-title {
-    font-size: 24px;
+    width: 60px;
+    height: 80px;
   }
 
   .mt-info h2 {
-    font-size: 18px;
+    font-size: 15px;
   }
 
-  .mt-info p {
-    font-size: 13px;
-  }
-
-  .mt-view-btn,
-  .mt-open-btn {
-    font-size: 13px;
-    padding: 6px 10px;
+  /* If width is very small, we might need to stack buttons or hide one */
+  .mt-actions {
+    align-self: center;
   }
 }

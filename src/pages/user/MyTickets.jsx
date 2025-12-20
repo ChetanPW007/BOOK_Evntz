@@ -20,7 +20,11 @@ export default function MyTickets() {
       if (timeStr.includes("T")) {
         const d = new Date(timeStr);
         if (isNaN(d.getTime())) return timeStr;
-        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        // Return Date + Time (12h)
+        return d.toLocaleString('en-US', {
+          month: 'short', day: 'numeric',
+          hour: 'numeric', minute: '2-digit', hour12: true
+        });
       }
       // If HH:MM (14:30)
       if (timeStr.includes(":")) {

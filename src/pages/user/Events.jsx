@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Events.css";
 import EventCard from "../../components/EventCard";
 import Loading from "../../components/Loading";
+import { apiGet } from "../../utils/api";
 
 export default function Events() {
   const navigate = useNavigate();
@@ -45,59 +47,58 @@ export default function Events() {
     async function fetchData() {
       setLoading(true);
       try {
-        // Fetch Events
-        const res = await fetch("http://127.0.0.1:5000/api/events/");
-        const data = await res.json();
+        // Fetch Events and Auditoriums in parallel using apiGet
+        const [eventsData, auditoriumsData] = await Promise.all([
+          apiGet("/events/"),
+          apiGet("/auditoriums/"),
+        ]);
 
-        let eventsArray = Array.isArray(data)
-          ? data
-          : data?.events && Array.isArray(data.events)
-            ? data.events
+        // --- Process Events ---
+        let eventsArray = Array.isArray(eventsData)
+          ? eventsData
+          : eventsData?.events && Array.isArray(eventsData.events)
+            ? eventsData.events
             : [];
 
         const visibleEvents = eventsArray.filter(
           (ev) =>
             !ev.Visibility || // Assume visible if missing
-            ev.Visibility.toLowerCase() === "visible" ||
-            ev.Visibility.toLowerCase() === "true"
+            String(ev.Visibility).toLowerCase() === "visible" ||
+            String(ev.Visibility).toLowerCase() === "true"
         );
 
         // Filter out past events
         const now = new Date();
-        const futureEvents = visibleEvents.filter(ev => {
+        const futureEvents = visibleEvents.filter((ev) => {
           if (!ev.Date) return true;
           try {
             const evDate = new Date(`${ev.Date} ${ev.Time || "23:59"}`);
+            // Check if date is valid before comparing
+            if (isNaN(evDate.getTime())) return true;
             return evDate >= now;
-          } catch { return true; }
+          } catch {
+            return true;
+          }
         });
 
         if (futureEvents.length === 0) {
           setError("No upcoming events found.");
           setEvents([]);
         } else {
-          const normalized = futureEvents.map((ev, i) =>
-            normalizeEvent(ev, i)
-          );
+          const normalized = futureEvents.map((ev, i) => normalizeEvent(ev, i));
           setEvents(normalized);
           localStorage.setItem("cachedEvents", JSON.stringify(normalized));
         }
 
-        // Fetch Auditoriums
-        const resAudi = await fetch("http://127.0.0.1:5000/api/auditoriums/");
-        const dataAudi = await resAudi.json();
-
-        if (dataAudi.status === "success") {
-          // Filter: Status == Active AND has future events
-          // Filter: Status == Active
-          const activeAuditoriums = dataAudi.data.filter(audi =>
-            audi.Status?.toLowerCase() === "active"
+        // --- Process Auditoriums ---
+        if (auditoriumsData.status === "success" && Array.isArray(auditoriumsData.data)) {
+          const activeAuditoriums = auditoriumsData.data.filter(
+            (audi) => audi.Status?.toLowerCase() === "active"
           );
-
           setAuditoriums(activeAuditoriums);
         }
       } catch (err) {
-        console.error("Error fetching events:", err);
+        console.error("Error fetching data:", err);
 
         const cached = localStorage.getItem("cachedEvents");
         if (cached) {

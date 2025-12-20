@@ -43,6 +43,7 @@
   cursor: pointer;
   transition: 0.2s;
 }
+
 .btn-back:hover {
   color: #fff;
 }
@@ -97,6 +98,7 @@
   font-weight: 600;
   transition: 0.3s;
 }
+
 .btn-logout:hover {
   background: #d32f2f;
 }
@@ -107,6 +109,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -125,11 +128,86 @@
   align-items: center;
   justify-content: center;
 }
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
+  }
+}
+
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .profile-container {
+    padding-top: 100px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .profile-card {
+    padding: 25px 20px;
+    width: 100%;
+    border-radius: 16px;
+  }
+
+  .btn-back {
+    top: 15px;
+    left: 15px;
+    font-size: 0.9rem;
+  }
+
+  .profile-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-name {
+    font-size: 1.4rem;
+  }
+
+  .details-box {
+    padding: 15px;
+  }
+
+  .details-box p {
+    font-size: 0.9rem;
+    margin: 6px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding-top: 90px;
+  }
+
+  .profile-card {
+    padding: 20px 15px;
+  }
+
+  .profile-img {
+    width: 90px;
+    height: 90px;
+    border-width: 2px;
+  }
+
+  .profile-name {
+    font-size: 1.3rem;
+  }
+
+  .details-box {
+    padding: 12px;
+  }
+
+  .details-box p {
+    font-size: 0.85rem;
+  }
+
+  .btn-logout {
+    width: 100%;
+    max-width: 250px;
+    padding: 10px 20px;
   }
 }

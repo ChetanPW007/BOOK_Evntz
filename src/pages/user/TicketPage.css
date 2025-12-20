@@ -125,6 +125,7 @@
 .gold-text {
   background: linear-gradient(45deg, #fae38c, #f9d56e);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -238,4 +239,12 @@
   .t-info-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.t-booked-on {
+  margin-top: 10px;
+  text-align: right;
+  color: #555;
+  font-size: 0.8rem;
+  padding-top: 5px;
 }

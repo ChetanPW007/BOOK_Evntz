@@ -1,6 +1,7 @@
 // src/components/EventCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "./EventCard.css";
 
 export default function EventCard({ event, index }) {
@@ -73,12 +74,22 @@ export default function EventCard({ event, index }) {
   };
 
   return (
-    <div
+    <motion.div
       className="event-card"
       onClick={openDetails}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && openDetails()}
+
+      // Animation Props
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{
+        duration: 0.6,
+        ease: "easeOut",
+        delay: index ? index * 0.1 : 0
+      }}
     >
       {/* ---------------------- Poster ---------------------- */}
       <div className="event-media">
@@ -86,6 +97,7 @@ export default function EventCard({ event, index }) {
           src={posterUrl}
           alt={`${name} poster`}
           className="event-poster"
+          loading="lazy"
           onError={(e) => {
             e.currentTarget.src = "/assets/default.jpg";
           }}
@@ -132,6 +144,6 @@ export default function EventCard({ event, index }) {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

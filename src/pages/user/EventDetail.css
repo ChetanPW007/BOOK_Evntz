@@ -3,7 +3,7 @@
   /* Match UserHome Gradient */
   background: linear-gradient(180deg, #3b0b0b, #050505);
   color: #fff;
-  padding-bottom: 40px;
+  padding-bottom: 120px;
 }
 
 .event-banner {
@@ -220,6 +220,7 @@
     margin: 0;
   }
 }
+
 /* =============================================
    NEW SECTION STYLES
 ============================================= */
