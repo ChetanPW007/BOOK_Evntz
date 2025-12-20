@@ -173,7 +173,7 @@ export default function SeatBookingPage({
         poster: event?.poster,
       };
 
-      const res = await fetch("http://localhost:5000/api/bookings/create", {
+      const res = await fetch("https://turbo007.pythonanywhere.com/api/bookings/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingPayload),
@@ -269,9 +269,8 @@ export default function SeatBookingPage({
                 {rowSeats.map((s) => (
                   <button
                     key={s.id}
-                    className={`sbp-seat ${
-                      s.occupied ? "occupied" : !s.locked ? "available" : "locked"
-                    } ${s.selected ? "selected" : ""}`}
+                    className={`sbp-seat ${s.occupied ? "occupied" : !s.locked ? "available" : "locked"
+                      } ${s.selected ? "selected" : ""}`}
                     onClick={() => toggleSeat(s.id)}
                     disabled={s.occupied || s.locked || loading || !!userBooking}
                   >

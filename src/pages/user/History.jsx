@@ -14,11 +14,7 @@ export default function History() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
   // ------------------ Backend URL ------------------
-  const backendRoot =
-    window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-      ? "http://localhost:5000/api"
-      : "/api";
+  const backendRoot = "https://turbo007.pythonanywhere.com/api";
 
   // ------------------ HELPER ------------------
   // ------------------ HELPER ------------------
