@@ -2,8 +2,8 @@
 // In development: defaults to "/api" (uses Vite proxy)
 // In production: set VITE_API_BASE_URL in Vercel env vars to your backend URL
 
-// Force backend URL for now
-const BASE = "https://turbo007.pythonanywhere.com";
+// Force backend URL for now (with /api prefix)
+const BASE = "https://turbo007.pythonanywhere.com/api";
 
 console.log("🔧 API Base URL:", BASE);
 console.log("🔧 Env variable:", import.meta.env.VITE_API_BASE_URL);
