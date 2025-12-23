@@ -65,8 +65,22 @@ def list_users():
 @user_blueprint.route("/add", methods=["POST"])
 def add_user():
     data = request.json or {}
-    data["Role"] = "user"  # force role as user
-    ok = gs.add_user(data)
+    
+    # Normalize keys to match Google Sheet headers (Capitalized)
+    normalized_data = {
+        "Name": data.get("name"),
+        "Email": data.get("email"),
+        "USN": data.get("usn"),
+        "College": data.get("college"),
+        "Branch": data.get("branch"),
+        "Sem": data.get("sem"),
+        "Phone": data.get("phone"),
+        "Password": data.get("password"),
+        "Role": "user",
+        "Suspended": "No"
+    }
+    
+    ok = gs.add_user(normalized_data)
     if ok:
         return jsonify({"status": "success"}), 201
     return jsonify({"status": "failed"}), 500
