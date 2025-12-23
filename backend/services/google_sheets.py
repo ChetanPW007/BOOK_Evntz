@@ -328,7 +328,7 @@ class GoogleSheets:
         except Exception:
             return []
 
-    def mark_attendance(self, event_id, usn, attended=True):
+    def mark_attendance(self, event_id, usn, attended=True, schedule=None):
         rows = self.read_range(SHEET_ATTENDANCE)
         try:
             ws = self._worksheet(SHEET_ATTENDANCE)
@@ -336,15 +336,29 @@ class GoogleSheets:
         except Exception:
             headers = []
 
+        # Find match by EventID, USN, and Schedule (if provided)
+        target_schedule = str(schedule).strip() if schedule else ""
+
         for i, r in enumerate(rows, start=2):
-            if str(r.get("EventID","")).strip() == str(event_id).strip() and str(r.get("USN","")).strip() == str(usn).strip():
-                r["Attendend"] = "Yes" if attended else "No"
+            matched_event = str(r.get("EventID","")).strip() == str(event_id).strip()
+            matched_usn = str(r.get("USN","")).strip().lower() == str(usn).strip().lower()
+            matched_schedule = True
+            if target_schedule:
+                # Compare schedules (handling potential formatting differences)
+                matched_schedule = str(r.get("Schedule","")).strip() == target_schedule
+
+            if matched_event and matched_usn and matched_schedule:
+                r["Attended"] = "Yes" if attended else "No"
+                r["Timestamp"] = str(datetime.utcnow())
                 return self.write_row_by_index(SHEET_ATTENDANCE, i, r)
-        # append
+        
+        # append new record
         new_row = {h: "" for h in headers}
         new_row["EventID"] = event_id
         new_row["USN"] = usn
-        new_row["Attendend"] = "Yes" if attended else "No"
+        new_row["Schedule"] = target_schedule
+        new_row["Attended"] = "Yes" if attended else "No"
+        new_row["Timestamp"] = str(datetime.utcnow())
         return self.append_row(SHEET_ATTENDANCE, new_row)
 
     def delete_attendance_for_event(self, event_id):

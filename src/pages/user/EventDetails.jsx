@@ -302,16 +302,6 @@ export default function EventDetails() {
 
   const handleTimeClick = (slot) => {
     setSelectedSchedule(slot);
-    // Instant navigate to booking
-    navigate(`/event/${event.id}/booking`, {
-      state: {
-        event: {
-          ...event,
-          Auditorium: event.auditorium
-        },
-        schedule: slot
-      },
-    });
   };
 
   if (loadingEvent)
@@ -449,6 +439,46 @@ export default function EventDetails() {
           <div className="venue-name">🏛️ {event.auditorium}</div>
           <div className="venue-capacity">Capacity: {event.capacity} seats</div>
         </div>
+      </div>
+
+      {/* ------------------------------ Booking CTA ------------------------------ */}
+      <div className="booking-footer">
+        {selectedSchedule ? (
+          <div className="selection-info">
+            <span className="selected-label">Selected:</span>
+            <span className="selected-value">
+              {new Date(selectedSchedule).toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              })}
+            </span>
+          </div>
+        ) : (
+          <div className="selection-info">
+            <span className="muted">Please select a time slot above</span>
+          </div>
+        )}
+
+        <button
+          className="btn primary book-now-btn"
+          disabled={!selectedSchedule}
+          onClick={() => {
+            navigate(`/event/${event.id}/booking`, {
+              state: {
+                event: {
+                  ...event,
+                  Auditorium: event.auditorium
+                },
+                schedule: selectedSchedule
+              },
+            });
+          }}
+        >
+          Book Now
+        </button>
       </div>
     </div>
   );

@@ -3,57 +3,95 @@ import { apiGet, apiPost } from "../../utils/api";
 import "./Admin.css";
 
 export default function VolunteerScanner() {
-  const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [slots, setSlots] = useState([]); // List of { eventId, title, schedule, dateLabel }
+  const [selectedSlotKey, setSelectedSlotKey] = useState(""); // eventId_ISOString
   const [scanInput, setScanInput] = useState("");
-  const [lastResult, setLastResult] = useState(null); // { success: boolean, msg: string, user: string }
+  const [lastResult, setLastResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function loadEvents() {
-      const res = await apiGet("/events/");
-      const list = res.events || res || [];
-      // Filter only visible or upcoming logic if needed, but for now show all
-      setEvents(list);
+    async function loadTodaySlots() {
+      try {
+        const res = await apiGet("/events/");
+        const allEvents = res.events || [];
+        const today = new Date().toISOString().split("T")[0];
+        const todaySlots = [];
+
+        allEvents.forEach(ev => {
+          let schedules = [];
+
+          // Parse schedules
+          if (ev.Schedules) {
+            try {
+              const parsed = typeof ev.Schedules === 'string' ? JSON.parse(ev.Schedules) : ev.Schedules;
+              if (Array.isArray(parsed)) {
+                schedules = parsed.map(s => {
+                  if (s.Date && s.Time) return `${s.Date}T${s.Time}:00`;
+                  return null;
+                }).filter(Boolean);
+              }
+            } catch (e) { console.warn("Schedules parse error", e); }
+          }
+
+          // Fallback if no schedules or none matched
+          if (schedules.length === 0 && ev.Date) {
+            schedules.push(`${ev.Date}T${ev.Time || "00:00"}:00`);
+          }
+
+          // Filter for TODAY
+          schedules.forEach(s => {
+            if (s.startsWith(today)) {
+              const timeLabel = new Date(s).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              todaySlots.push({
+                eventId: ev.ID,
+                eventName: ev.Name,
+                schedule: s,
+                label: `${ev.Name} (${timeLabel})`,
+                key: `${ev.ID}_${s}`
+              });
+            }
+          });
+        });
+
+        setSlots(todaySlots);
+        if (todaySlots.length > 0) setSelectedSlotKey(todaySlots[0].key);
+      } catch (err) {
+        console.error("Failed to load today's events", err);
+      }
     }
-    loadEvents();
+    loadTodaySlots();
   }, []);
 
   const handleCheckIn = async (e) => {
     e.preventDefault();
-    if (!selectedEvent) return alert("Please select an event first");
+    if (!selectedSlotKey) return alert("Please select a slot first");
     if (!scanInput) return;
+
+    const slot = slots.find(s => s.key === selectedSlotKey);
+    if (!slot) return;
 
     setLoading(true);
     setLastResult(null);
 
-    // Input could be a raw bookingID or USN?? 
-    // Usually a scanner reads a string. We expect standard BookingID "BK-..." or USN.
-    // Our backend attendance.py expects 'usn' for attendance generally, 
-    // BUT user prompt says "scanning qr of in admin able to see in admin booking and event who came" -> likely marking specific booking or USN.
-    // The previous implementation used `usn`. Let's assume the QR contains the USN or BookingID.
-    // If it's a BookingID, we might need to resolve USN.
-    // However, the simplest path for now: standard attendance by USN for an event.
-
-    // NOTE: The previous turn's implementation used /attendance/mark with { eventId, usn }.
-
     try {
-      // We will try to mark attendance
-      const payload = { eventId: selectedEvent, usn: scanInput, attended: true };
+      const payload = {
+        eventId: slot.eventId,
+        usn: scanInput,
+        schedule: slot.schedule,
+        attended: true
+      };
       const res = await apiPost("/attendance/mark", payload);
 
-      if (res.status === "success" || res.success) {
-        setLastResult({ success: true, msg: "Checked In Successfully", user: scanInput });
+      if (res.status === "success") {
+        setLastResult({ success: true, msg: `Checked In: ${slot.eventName}`, user: scanInput });
       } else {
-        // If failed, maybe it was a booking ID? Let's try to 'find' the booking if we had that logic.
-        // For now, assume failure.
         setLastResult({ success: false, msg: res.message || "Check-in failed" });
       }
     } catch (err) {
       setLastResult({ success: false, msg: "Network error" });
     } finally {
       setLoading(false);
-      setScanInput(""); // clear for next scan
+      setScanInput("");
     }
   };
 
@@ -69,19 +107,22 @@ export default function VolunteerScanner() {
       <div style={{ maxWidth: "600px", margin: "0 auto" }}>
         {/* EVENT SELECTOR */}
         <div style={{ marginBottom: "24px" }}>
-          <label style={{ display: "block", marginBottom: "8px", color: "#aaa" }}>Select Active Event</label>
+          <label style={{ display: "block", marginBottom: "8px", color: "#aaa" }}>Select Today's Active Slot</label>
           <select
             className="admin-actions select"
             style={{ width: "100%", padding: "12px", fontSize: "16px" }}
-            value={selectedEvent}
-            onChange={(e) => setSelectedEvent(e.target.value)}
+            value={selectedSlotKey}
+            onChange={(e) => setSelectedSlotKey(e.target.value)}
           >
-            <option value="">-- Choose Event --</option>
-            {events.map((ev) => (
-              <option key={ev.ID} value={ev.ID}>
-                {ev.Name} ({ev.Date})
-              </option>
-            ))}
+            {slots.length === 0 ? (
+              <option value="">-- No Events Scheduled Today --</option>
+            ) : (
+              slots.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.label}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
