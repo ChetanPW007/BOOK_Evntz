@@ -9,44 +9,62 @@ user_blueprint = Blueprint("users", __name__)
 @user_blueprint.route("/login", methods=["POST"])
 def login():
     data = request.json or {}
+    print(f"DEBUG: Login Attempt received: {data}")
 
-    role = data.get("role", "user").lower()  # 'admin' or 'user'
-    login_id = data.get("loginId") or data.get("usn") or data.get("phone")
-    password = data.get("password")
+    role = str(data.get("role", "user")).lower()
+    login_id = str(data.get("loginId") or data.get("usn") or data.get("phone") or "").strip()
+    password = str(data.get("password") or "").strip()
 
     if not login_id or not password:
         return jsonify({"status": "failed", "message": "Login ID and Password required"}), 400
 
     users = gs.get_users()
+    print(f"DEBUG: Checking against {len(users)} users in sheet")
+
+    # Helper to clean phone numbers (remove .0 from Google Sheets)
+    def clean_phone(val):
+        s = str(val).split('.')[0].strip()
+        return s
 
     for u in users:
+        u_usn = str(u.get("USN", "")).strip().lower()
+        u_phone = clean_phone(u.get("Phone", ""))
+        u_role = str(u.get("Role", "user")).lower()
+        u_pass = str(u.get("Password", "")).strip()
+
         # Admin login by USN
-        if role == "admin" and str(u.get("USN", "")).lower() == login_id.lower():
+        if role == "admin" and u_usn == login_id.lower():
             pass
         # User login by Phone
-        elif role == "user" and str(u.get("Phone", "")).strip() == str(login_id).strip():
+        elif role == "user" and u_phone == clean_phone(login_id):
             pass
         else:
             continue
 
-        # Suspend check
+        # Found user, now check password and status
+        print(f"DEBUG: Found matching user profile: {u_usn or u_phone}")
+
         if str(u.get("Suspended", "")).lower() == "yes":
+            print(f"DEBUG: Login failed - Account suspended for {login_id}")
             return jsonify({"status": "failed", "message": "Account suspended"}), 403
 
-        # Password check
-        if str(u.get("Password", "")) != str(password):
+        if u_pass != password:
+            print(f"DEBUG: Login failed - Password mismatch for {login_id}")
             return jsonify({"status": "failed", "message": "Incorrect password"}), 401
 
+        # Success
         user_copy = u.copy()
         user_copy.pop("Password", None)
-        user_copy["role"] = u.get("Role", "user").lower()
+        user_copy["role"] = u_role
 
+        print(f"DEBUG: Login successful for {userData['Name'] if (userData:=user_copy) else login_id}")
         return jsonify({
             "status": "success",
             "message": "Login successful",
             "user": user_copy
         }), 200
 
+    print(f"DEBUG: Login failed - User not found for {login_id} (Role: {role})")
     return jsonify({"status": "failed", "message": "User not found"}), 404
 
 
