@@ -422,7 +422,19 @@ export default function SeatBooking() {
                     <div className="info-text-block">
                         <h1>{event.Name || event.name || "Event"}</h1>
                         <p className="aud-name">{event.Auditorium || event.auditorium || "Auditorium"}</p>
-                        <p className="event-dt">{event.Date || event.date || "TBA"} • {event.Time || event.time || "TBA"}</p>
+                        <p className="event-dt">
+                            {location.state?.schedule
+                                ? new Date(location.state.schedule).toLocaleString('en-IN', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true
+                                })
+                                : `${event.Date || event.date || "TBA"} • ${event.Time || event.time || "TBA"}`
+                            }
+                        </p>
                     </div>
 
                     {userHasBooking && (

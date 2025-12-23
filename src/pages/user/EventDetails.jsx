@@ -210,8 +210,6 @@ export default function EventDetails() {
         });
 
         console.log("✅ Event loaded:", foundEvent.Name);
-        console.log("✅ Hydrated Coordinators:", hydratedCoords);
-        console.log("✅ Hydrated Speakers:", hydratedSpeakers);
 
         // STEP 5: Parse dynamic schedules from admin configuration
         let parsedSchedules = [];
@@ -279,7 +277,42 @@ export default function EventDetails() {
   }, [eventId]);
 
 
-  /* ------------------------------ STATES ------------------------------ */
+  /* ------------------------------ LOGIC ------------------------------ */
+
+  // Organise schedules by Date: { "YYYY-MM-DD": [ISOStrings] }
+  const groupedSchedules = (event?.schedules || []).reduce((acc, s) => {
+    const d = safeDate(s);
+    if (!d) return acc;
+    const dateKey = d.toISOString().split("T")[0];
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(s);
+    return acc;
+  }, {});
+
+  const availableDates = Object.keys(groupedSchedules).sort();
+
+  // Track active date for the time strip
+  const [activeDate, setActiveDate] = useState(null);
+
+  useEffect(() => {
+    if (availableDates.length > 0 && !activeDate) {
+      setActiveDate(availableDates[0]);
+    }
+  }, [availableDates, activeDate]);
+
+  const handleTimeClick = (slot) => {
+    setSelectedSchedule(slot);
+    // Instant navigate to booking
+    navigate(`/event/${event.id}/booking`, {
+      state: {
+        event: {
+          ...event,
+          Auditorium: event.auditorium
+        },
+        schedule: slot
+      },
+    });
+  };
 
   if (loadingEvent)
     return (
@@ -294,8 +327,6 @@ export default function EventDetails() {
         <p>Event not found.</p>
       </div>
     );
-
-  const schedules = event.schedules || [];
 
   /* ------------------------------ UI ------------------------------ */
 
@@ -332,34 +363,50 @@ export default function EventDetails() {
         </div>
       </div>
 
-      {/* ------------------------------ Time Selection ------------------------------ */}
-      <div className="section-container">
-        <h2 className="section-heading">Select Show Time</h2>
-        <p className="section-subheading">{event.date}</p>
+      {/* ------------------------------ BookMyShow Date Selection ------------------------------ */}
+      <div className="section-container time-selection-section">
+        <h2 className="section-heading">Select Date & Time</h2>
 
+        {/* Date Strip */}
+        <div className="date-strip">
+          {availableDates.map((dateKey) => {
+            const d = new Date(dateKey);
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+            const dayNum = d.getDate();
+            const monthName = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+
+            return (
+              <div
+                key={dateKey}
+                className={`date-item ${activeDate === dateKey ? "active" : ""}`}
+                onClick={() => setActiveDate(dateKey)}
+              >
+                <span className="day-name">{dayName}</span>
+                <span className="day-num">{dayNum}</span>
+                <span className="month-name">{monthName}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Time Slots for selected date */}
         <div className="showtime-panel">
-          {schedules.length > 0 ? (
-            schedules.map((s) => (
+          {activeDate && groupedSchedules[activeDate] ? (
+            groupedSchedules[activeDate].map((s) => (
               <button
                 key={s}
                 className={`showtime-btn ${selectedSchedule === s ? "active" : ""}`}
-                onClick={() => setSelectedSchedule(s)}
+                onClick={() => handleTimeClick(s)}
               >
-                {formatTimeLabel(s)}
+                {new Date(s).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </button>
             ))
           ) : (
-            <p className="muted">No showtimes available</p>
+            <p className="muted">No showtimes available for this date</p>
           )}
-        </div>
-      </div>
-
-      {/* ------------------------------ Auditorium Info ------------------------------ */}
-      <div className="section-container">
-        <h2 className="section-heading">Venue</h2>
-        <div className="venue-info">
-          <div className="venue-name">🏛️ {event.auditorium}</div>
-          <div className="venue-capacity">Capacity: {event.capacity} seats</div>
         </div>
       </div>
 
@@ -395,38 +442,13 @@ export default function EventDetails() {
         </div>
       )}
 
-      {/* ------------------------------ Booking CTA ------------------------------ */}
-      <div className="booking-footer">
-        {selectedSchedule ? (
-          <div className="selection-info">
-            <span className="selected-label">Selected:</span>
-            <span className="selected-value">{formatTimeLabel(selectedSchedule)}</span>
-          </div>
-        ) : (
-          <div className="selection-info">
-            <span className="muted">Please select a showtime above</span>
-          </div>
-        )}
-
-        <button
-          className="btn primary book-now-btn"
-          onClick={() => {
-            if (!selectedSchedule)
-              return alert("Please select a show time first!");
-            navigate(`/event/${event.id}/booking`, {
-              state: {
-                event: {
-                  ...event,
-                  Auditorium: event.auditorium // Ensure selected auditorium is passed
-                },
-                schedule: selectedSchedule
-              },
-            });
-          }}
-          disabled={!selectedSchedule}
-        >
-          Book Now
-        </button>
+      {/* ------------------------------ Venue Info ------------------------------ */}
+      <div className="section-container">
+        <h2 className="section-heading">Venue</h2>
+        <div className="venue-info">
+          <div className="venue-name">🏛️ {event.auditorium}</div>
+          <div className="venue-capacity">Capacity: {event.capacity} seats</div>
+        </div>
       </div>
     </div>
   );
