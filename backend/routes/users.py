@@ -65,15 +65,23 @@ def list_users():
 @user_blueprint.route("/add", methods=["POST"])
 def add_user():
     raw_data = request.json or {}
+    print(f"DEBUG: Receiving /users/add payload: {raw_data}") # SERVER LOG
     
     # Helper to get value regardless of casing (e.g. 'name' or 'Name')
     def get_val(key):
+        # Case 1: Exact match
+        if key in raw_data and raw_data[key]:
+            return raw_data[key]
+        # Case 2: Lowercase match
+        if key.lower() in raw_data and raw_data[key.lower()]:
+            return raw_data[key.lower()]
+        # Case 3: Loop search
         for k, v in raw_data.items():
-            if k.lower() == key.lower():
+            if k.strip().lower() == key.lower():
                 return v
-        return None
+        return ""
 
-    # Explicitly map to primary headers to prevent any column drift
+    # Explicitly map to primary headers (A-J)
     normalized_data = {
         "Name": get_val("Name"),
         "Email": get_val("Email"),
@@ -87,9 +95,14 @@ def add_user():
         "Suspended": "No"
     }
     
+    print(f"DEBUG: Normalized data for Sheet: {normalized_data}")
+    
     ok = gs.add_user(normalized_data)
     if ok:
+        print("DEBUG: User added to Sheet successfully")
         return jsonify({"status": "success"}), 201
+    
+    print("DEBUG: Failed to add user to Sheet")
     return jsonify({"status": "failed"}), 500
 
 

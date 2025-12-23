@@ -59,15 +59,15 @@ export default function Register() {
 
     try {
       const response = await apiPost("/users/add", {
-        Name: formData.name,
-        Email: formData.email,
-        USN: formData.usn,
-        College: formData.college,
-        Branch: formData.branch,
-        Sem: formData.sem,
-        Phone: formData.phone,
-        Password: formData.password,
-        Role: "user",
+        name: formData.name,
+        email: formData.email,
+        usn: formData.usn,
+        college: formData.college,
+        branch: formData.branch,
+        sem: formData.sem,
+        phone: formData.phone,
+        password: formData.password,
+        role: "user",
       });
 
       if (response.status === "success") {
