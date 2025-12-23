@@ -24,28 +24,33 @@ def cleanup():
         "email": "Email",
         "usn": "USN",
         "branch": "Branch",
-        "sem": "Sem"
+        "sem": "Sem",
+        "phone": "Phone",
+        "college": "College",
+        "password": "Password",
+        "role": "Role",
+        "suspended": "Suspended"
     }
     
     # 2. Process rows
     cleaned_rows = []
+    primary_headers = ["Name", "Email", "USN", "College", "Branch", "Sem", "Phone", "Password", "Role", "Suspended"]
+
     for row in all_data:
-        # Move data from lowercase to capitalized if capitalized is empty
-        for src, target in mapping.items():
-            if src in row and row[src] and not row.get(target):
-                row[target] = row[src]
+        processed_row = {h: row.get(h, "") for h in primary_headers}
         
-        # Build the row for update (respecting original capitalized order)
-        # We only want columns A-J (Name, Email, USN, College, Branch, Sem, Phone, Password, Role, Suspended)
-        primary_headers = ["Name", "Email", "USN", "College", "Branch", "Sem", "Phone", "Password", "Role", "Suspended"]
+        # Move data from any case variant to capitalized
+        for k, v in row.items():
+            if not v: continue
+            target = mapping.get(k.lower())
+            if target and not processed_row.get(target):
+                processed_row[target] = v
         
-        new_row = []
-        for h in primary_headers:
-            new_row.append(str(row.get(h, "")))
-        cleaned_rows.append(new_row)
+        new_row_list = [str(processed_row.get(h, "")) for h in primary_headers]
+        cleaned_rows.append(new_row_list)
 
     # 3. Update the whole sheet
-    # First, truncate/overwrite the top part with primary headers
+    # Set headers exactly
     ws.update("A1", [primary_headers])
     
     # Update all rows
@@ -54,21 +59,16 @@ def cleanup():
         ws.update(f"A2:{range_end}", cleaned_rows)
         
     # 4. Remove leftover columns if they exist beyond J
-    # Google Sheets columns: J is 10th. If headers had more, they are still there.
-    # Actually ws.update just updates cells. If columns K+ had data, they remain.
-    # Let's explicitly clear them or delete them.
     if len(headers) > 10:
         print(f"Cleaning up {len(headers) - 10} extra columns...")
-        # Delete columns from 11 onwards
-        # ws.delete_columns is not in gspread by default in some versions or needs index
-        # Better: resize the sheet or just clear the range
         last_col_letter = ""
         n = len(headers)
         while n > 0:
             n, rem = divmod(n-1, 26)
             last_col_letter = chr(65+rem) + last_col_letter
         
-        ws.batch_clear([f"K1:{last_col_letter}{len(all_data) + 1}"])
+        # Clear including header row
+        ws.batch_clear([f"K1:{last_col_letter}{len(all_data) + 10}"])
         print("✅ Redundant columns cleared.")
 
     print("✨ Cleanup Complete!")

@@ -126,15 +126,15 @@ export default function Login() {
 
     try {
       const data = await apiPost("/users/add", {
-        name,
-        email,
-        usn,
-        branch,
-        sem,
-        phone,
-        college,
-        password,
-        role: "user", // force role as user
+        Name: name,
+        Email: email,
+        USN: usn,
+        Branch: branch,
+        Sem: sem,
+        Phone: phone,
+        College: college,
+        Password: password,
+        Role: "user",
       });
 
       if (data.status === "success") {

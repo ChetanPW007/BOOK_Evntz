@@ -50,19 +50,30 @@ class GoogleSheets:
         ws = self._worksheet(sheet_name)
         headers = self._headers(ws)
         
+        # --- CASE-INSENSITIVE HEADER MAPPING ---
+        header_map = {h.lower(): h for h in headers}
+        
         # --- DYNAMIC HEADER EXPANSION ---
         try:
-            missing_headers = [k for k in row_dict.keys() if k not in headers]
+            missing_headers = []
+            for k in row_dict.keys():
+                if k.lower() not in header_map:
+                    missing_headers.append(k)
+                else:
+                    # Update row_dict to match existing header casing if it differs
+                    actual_h = header_map[k.lower()]
+                    if actual_h != k and actual_h in headers:
+                        # Move data to the correctly cased key
+                        row_dict[actual_h] = row_dict.get(actual_h) or row_dict.get(k)
+
             if missing_headers:
                 print(f"DEBUG: Found new columns for {sheet_name}: {missing_headers}")
                 headers.extend(missing_headers)
                 ws.update("A1", [headers]) 
+                # Refresh header map
+                header_map = {h.lower(): h for h in headers}
         except Exception as e:
             print(f"Header Expansion Failed (Non-critical): {e}")
-            # Ensure headers list is updated locally so we map data correctly if possible
-            # or revert to old headers? 
-            # If update failed, the sheet doesn't have the columns. 
-            # If we try to write data for new columns, 'append_row' might implicitly handle it or just write cells.
             pass 
         
         print(f"DEBUG: append_row sheet={sheet_name} headers={headers}")
@@ -70,13 +81,22 @@ class GoogleSheets:
         # create row in same header order
         row = []
         for h in headers:
-            val = str(row_dict.get(h, ""))
-            # SAFETY TRUNCATE: Google Sheets cell limit is ~50k chars. 
-            # If we send more, API throws 400 Bad Request / INVALID_ARGUMENT
-            if len(val) > 40000:
-                print(f"WARNING: Truncating column '{h}' (len {len(val)}) to avoid API crash.")
-                val = val[:40000] + "...(TRUNCATED)"
-            row.append(val)
+            # Try exact match first, then case-insensitive
+            val = row_dict.get(h)
+            if val is None:
+                # Fallback to case-insensitive match from the input
+                for k, v in row_dict.items():
+                    if k.lower() == h.lower():
+                        val = v
+                        break
+            
+            val_str = str(val) if val is not None else ""
+            
+            # SAFETY TRUNCATE
+            if len(val_str) > 40000:
+                print(f"WARNING: Truncating column '{h}' (len {len(val_str)}) to avoid API crash.")
+                val_str = val_str[:40000] + "...(TRUNCATED)"
+            row.append(val_str)
             
         ws.append_row(row)
         return True
@@ -85,13 +105,21 @@ class GoogleSheets:
         ws = self._worksheet(sheet_name)
         headers = self._headers(ws)
         
+        # --- CASE-INSENSITIVE HEADER MAPPING ---
+        header_map = {h.lower(): h for h in headers}
+
         # --- DYNAMIC HEADER EXPANSION ---
         try:
-            missing_headers = [k for k in row_dict.keys() if k not in headers]
+            missing_headers = []
+            for k in row_dict.keys():
+                if k.lower() not in header_map:
+                    missing_headers.append(k)
+            
             if missing_headers:
                 print(f"DEBUG: Found new columns for {sheet_name} (update): {missing_headers}")
                 headers.extend(missing_headers)
                 ws.update("A1", [headers]) 
+                header_map = {h.lower(): h for h in headers}
         except Exception as e:
             print(f"Header Expansion Failed (Update) (Non-critical): {e}")
             pass
@@ -99,11 +127,19 @@ class GoogleSheets:
         # create row in same header order with safety truncate
         row = []
         for h in headers:
-            val = str(row_dict.get(h, ""))
-            if len(val) > 40000:
+            # Try exact match first, then case-insensitive
+            val = row_dict.get(h)
+            if val is None:
+                for k, v in row_dict.items():
+                    if k.lower() == h.lower():
+                        val = v
+                        break
+            
+            val_str = str(val) if val is not None else ""
+            if len(val_str) > 40000:
                  print(f"WARNING: Truncating column '{h}' to avoid API crash.")
-                 val = val[:40000] + "...(TRUNCATED)"
-            row.append(val)
+                 val_str = val_str[:40000] + "...(TRUNCATED)"
+            row.append(val_str)
 
         # compute last column letter
         last_col = len(headers)

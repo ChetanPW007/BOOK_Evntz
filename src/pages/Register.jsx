@@ -59,8 +59,15 @@ export default function Register() {
 
     try {
       const response = await apiPost("/users/add", {
-        ...formData,
-        role: "user", // force role as user
+        Name: formData.name,
+        Email: formData.email,
+        USN: formData.usn,
+        College: formData.college,
+        Branch: formData.branch,
+        Sem: formData.sem,
+        Phone: formData.phone,
+        Password: formData.password,
+        Role: "user",
       });
 
       if (response.status === "success") {
