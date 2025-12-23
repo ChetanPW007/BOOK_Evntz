@@ -64,18 +64,25 @@ def list_users():
 # ------------------------------------------------------
 @user_blueprint.route("/add", methods=["POST"])
 def add_user():
-    data = request.json or {}
+    raw_data = request.json or {}
     
-    # Normalize keys to match Google Sheet headers (Capitalized)
+    # Helper to get value regardless of casing (e.g. 'name' or 'Name')
+    def get_val(key):
+        for k, v in raw_data.items():
+            if k.lower() == key.lower():
+                return v
+        return None
+
+    # Explicitly map to primary headers to prevent any column drift
     normalized_data = {
-        "Name": data.get("name"),
-        "Email": data.get("email"),
-        "USN": data.get("usn"),
-        "College": data.get("college"),
-        "Branch": data.get("branch"),
-        "Sem": data.get("sem"),
-        "Phone": data.get("phone"),
-        "Password": data.get("password"),
+        "Name": get_val("Name"),
+        "Email": get_val("Email"),
+        "USN": get_val("USN"),
+        "College": get_val("College"),
+        "Branch": get_val("Branch"),
+        "Sem": get_val("Sem"),
+        "Phone": get_val("Phone"),
+        "Password": get_val("Password"),
         "Role": "user",
         "Suspended": "No"
     }
