@@ -372,7 +372,11 @@ export default function AdminBookings() {
     setEvents(sorted);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    const interval = setInterval(load, 10000); // Poll events every 10 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   if (events === null) return <Loader />;
 
