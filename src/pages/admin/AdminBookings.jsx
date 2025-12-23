@@ -360,7 +360,16 @@ export default function AdminBookings() {
 
   async function load() {
     const res = await apiGet("/events/");
-    setEvents(res.events || res || []);
+    const rawEvents = res.events || res || [];
+
+    // Sort by date descending (Newest first)
+    const sorted = [...rawEvents].sort((a, b) => {
+      const dateA = new Date(a.Date || a.date);
+      const dateB = new Date(b.Date || b.date);
+      return dateB - dateA; // Descending
+    });
+
+    setEvents(sorted);
   }
 
   useEffect(() => { load(); }, []);

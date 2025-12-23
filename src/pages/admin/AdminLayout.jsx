@@ -32,7 +32,7 @@ export default function AdminLayout() {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+    localStorage.clear();
     navigate("/login");
   };
 

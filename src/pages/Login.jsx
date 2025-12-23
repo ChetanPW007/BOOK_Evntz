@@ -63,6 +63,7 @@ export default function Login() {
     }
 
     setLoading(true);
+    localStorage.clear();
 
     try {
       // Build request body

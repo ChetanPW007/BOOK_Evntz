@@ -51,7 +51,7 @@ export default function UserProfile() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+    localStorage.clear();
     navigate("/login");
   };
 

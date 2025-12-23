@@ -34,7 +34,7 @@ export default function ProfileDropdown({ user }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+    localStorage.clear();
     navigate("/login");
   };
 

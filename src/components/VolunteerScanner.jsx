@@ -49,8 +49,22 @@ export default function VolunteerScanner() {
         try {
             const res = await apiGet("/events/");
             if (res.events) {
-                // Filter for upcoming events logic could go here
-                setEvents(res.events);
+                // Today's date string in "YYYY-MM-DD" or similar format
+                // The Google Sheets date format is usually YYYY-MM-DD
+                const todayStr = new Date().toISOString().split('T')[0];
+
+                // Filter for events happening today
+                const todayEvents = res.events.filter(ev => {
+                    if (!ev.Date) return false;
+                    // Standardize both to YYYY-MM-DD for comparison
+                    try {
+                        const evDate = new Date(ev.Date).toISOString().split('T')[0];
+                        return evDate === todayStr;
+                    } catch {
+                        return false;
+                    }
+                });
+                setEvents(todayEvents);
             }
         } catch (e) {
             console.error("Failed to load events", e);
