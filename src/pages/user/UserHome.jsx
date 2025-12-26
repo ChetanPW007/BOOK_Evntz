@@ -20,13 +20,13 @@ const toArray = (value) => {
 
 // Normalize event object from Google Sheet
 const normalizeEvent = (ev, i) => ({
-  id: ev.ID || ev.id || `EV${i + 1}`,
-  name: ev.Name || ev.name || "Untitled Event",
-  auditorium: ev.Auditorium || ev.auditorium || "",
-  date: ev.Date || ev.date || "",
-  time: ev.Time || ev.time || "",
-  college: ev.College || ev.college || "",
-  capacity: ev.Capacity || ev.capacity || "",
+  id: String(ev.ID || ev.id || `EV${i + 1}`),
+  name: String(ev.Name || ev.name || "Untitled Event"),
+  auditorium: String(ev.Auditorium || ev.auditorium || ""),
+  date: String(ev.Date || ev.date || ""),
+  time: String(ev.Time || ev.time || ""),
+  college: String(ev.College || ev.college || ""),
+  capacity: String(ev.Capacity || ev.capacity || ""),
   poster:
     ev.Poster && ev.Poster.trim() !== "" ? ev.Poster : "/assets/default.jpg",
 
