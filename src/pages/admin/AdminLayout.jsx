@@ -42,16 +42,32 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-shell">
+      {/* Mobile Header Strip */}
+      <div className="admin-mobile-strip">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src={assets.logo || "/logo.png"} alt="Logo" style={{ width: 28 }} />
+          <span className="admin-brand" style={{ fontSize: 18 }}>GMU Admin</span>
+        </div>
+        <button
+          className={`admin-mobile-toggle ${mobileMenuOpen ? "open" : ""}`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+
       <aside className={`admin-sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="admin-logo-block">
           <img src={assets.logo || "/logo.png"} alt="GMU" style={{ width: 32 }} />
           <h2 className="admin-brand">GMU Admin</h2>
 
-          {/* Mobile Menu Toggle */}
+          {/* Close Button for Mobile (reusing toggle style) */}
           <button
-            className={`admin-mobile-toggle ${mobileMenuOpen ? "open" : ""}`}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            className="admin-mobile-toggle open"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
           >
             <span />
             <span />

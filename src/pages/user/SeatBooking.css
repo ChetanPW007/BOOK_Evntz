@@ -187,6 +187,14 @@
     border-color: #fae38c;
 }
 
+@media (max-width: 768px) {
+    .zoom-controls button {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+}
+
 .tip-text {
     font-size: 12px;
     color: #888;

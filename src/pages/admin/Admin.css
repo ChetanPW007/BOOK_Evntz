@@ -388,7 +388,35 @@
 /* Mobile Hamburger Toggle (Hidden on Desktop) */
 .admin-mobile-toggle {
   display: none;
-  /* Hidden by default */
+}
+
+.admin-mobile-strip {
+  display: none;
+  /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .admin-mobile-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 60px;
+    background: #111;
+    border-bottom: 1px solid var(--admin-border);
+    padding: 0 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    /* Below sidebar (1000) but above content */
+  }
+
+  .admin-main {
+    margin-top: 60px;
+    /* Push content down */
+    padding-top: 20px;
+  }
 }
 
 @media (max-width: 992px) {
