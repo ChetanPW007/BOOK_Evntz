@@ -140,40 +140,64 @@ export default function SeatBooking() {
                     console.log("✅ Using event-specific layout");
                 }
 
-                // 2. Fetch Bookings for this event
-                try {
-                    const resBookings = await apiGet(`/bookings/event/${eventId}`);
-                    const bookings = resBookings.data || [];
-
-                    // Extract all booked seats
-                    const allTaken = [];
-                    let userFound = false;
-
-                    bookings.forEach(b => {
-                        // Check if current user booked
-                        if (String(b.USN).toLowerCase() === String(usn).toLowerCase()) {
-                            userFound = true;
-                        }
-
-                        // Parse seats
-                        const s = String(b.Seats || "").split(",");
-                        s.forEach(seat => {
-                            if (seat.trim()) allTaken.push(seat.trim());
-                        });
-                    });
-
-                    setBookedSeats(allTaken);
-                    setUserHasBooking(userFound);
-                } catch (err) {
-                    console.error("Error fetching bookings", err);
-                }
+                // Initial fetch for bookings
+                fetchCurrentBookings();
             }
             setLoading(false);
         }
+
+        const fetchCurrentBookings = async () => {
+            try {
+                const resBookings = await apiGet(`/bookings/event/${eventId}`);
+                const bookings = resBookings.data || [];
+                const allTaken = [];
+                let userFound = false;
+
+                bookings.forEach(b => {
+                    if (String(b.USN).toLowerCase() === String(usn).toLowerCase()) {
+                        userFound = true;
+                    }
+                    const s = String(b.Seats || "").split(",");
+                    s.forEach(seat => {
+                        if (seat.trim()) allTaken.push(seat.trim());
+                    });
+                });
+
+                setBookedSeats(allTaken);
+                setUserHasBooking(userFound);
+            } catch (err) {
+                console.error("Error fetching bookings", err);
+            }
+        };
+
         loadData();
     }, [eventId, usn]);
 
-    // LOGIC: Determine active row
+    // REALTIME POLLING: Refresh booked seats every 5 seconds
+    useEffect(() => {
+        if (!eventId) return;
+
+        const fetchBookings = async () => {
+            try {
+                const resBookings = await apiGet(`/bookings/event/${eventId}`);
+                const bArr = resBookings.data || [];
+                const allTaken = [];
+                bArr.forEach(b => {
+                    const s = String(b.Seats || "").split(",");
+                    s.forEach(seat => {
+                        if (seat.trim()) allTaken.push(seat.trim());
+                    });
+                });
+                setBookedSeats(allTaken);
+            } catch (err) {
+                console.error("Polling error:", err);
+            }
+        };
+
+        const interval = setInterval(fetchBookings, 5000);
+        return () => clearInterval(interval);
+    }, [eventId]);
+
     // Determine Map source
     const seatMap = React.useMemo(() => {
         if (!event) return [];
@@ -213,24 +237,8 @@ export default function SeatBooking() {
     }
 
     const handleSeatClick = (seat, rowIndex) => {
-        // Validation 1: User already booked?
         if (userHasBooking) return;
-
-        // Validation 2: Seat already booked?
         if (bookedSeats.includes(seat)) return;
-
-        // Validation 3: Row Locked?
-        // User can only book in the active row (or previous rows if holes exist? 
-        // Requirement: "after 1 row fully booked 2nd row opens" implies strict sequential.
-        // However, usually we allow filling gaps in previous rows. 
-        // Let's enforce strictly: ONLY allowed in activeRowIndex.
-        // BUT what if someone cancels a seat in Row A while B is active? 
-        // Standard logic: Allow filling ANY gap up to activeRowIndex.
-        // Validation 3: Row Locked?
-        // Enforce strict sequential filling.
-        // Allow filling holes in previous rows (rowIndex <= activeRowIndex).
-        // Block future rows (rowIndex > activeRowIndex).
-        const isCustomLayout = !!(event && event.SeatLayout); // kept just for logic referencing if needed, but condition below is universal
 
         if (rowIndex > activeRowIndex) {
             alert("Please fill the front rows first!");
@@ -286,7 +294,6 @@ export default function SeatBooking() {
 
     // Desktop Mouse Drag
     const handleMouseDown = (e) => {
-        // Only drag if clicking on background, not buttons
         if (e.target.closest('.seat')) return;
         setIsDragging(true);
         setStartPan({ x: e.clientX - transform.x, y: e.clientY - transform.y });
@@ -308,14 +315,13 @@ export default function SeatBooking() {
 
     // Desktop Wheel Zoom
     const handleWheel = (e) => {
-        if (e.ctrlKey || e.metaKey || true) { // Always allow scroll to zoom in map area
-            e.preventDefault();
-            const scaleAmount = -e.deltaY * 0.001;
-            setTransform((prev) => {
-                const newScale = Math.min(Math.max(prev.scale + scaleAmount, 0.5), 3);
-                return { ...prev, scale: newScale };
-            });
-        }
+        // e.ctrlKey check is standard but we allow scrolling too
+        e.preventDefault();
+        const scaleAmount = -e.deltaY * 0.001;
+        setTransform((prev) => {
+            const newScale = Math.min(Math.max(prev.scale + scaleAmount, 0.5), 3);
+            return { ...prev, scale: newScale };
+        });
     };
 
     // Touch Handling (Pinch & Pan)
@@ -330,29 +336,25 @@ export default function SeatBooking() {
 
     const handleTouchStart = (e) => {
         if (e.touches.length === 1) {
-            // Pan Start
             const t = e.touches[0];
             setLastTouch({ x: t.clientX, y: t.clientY });
-            setIsDragging(true); // Reuse flag for simple pan
+            setIsDragging(true);
         } else if (e.touches.length === 2) {
-            // Pinch Start
             setInitialDist(getDist(e.touches[0], e.touches[1]));
         }
     };
 
     const handleTouchMove = (e) => {
         if (e.touches.length === 1 && isDragging && lastTouch) {
-            // Pan Action
             const t = e.touches[0];
             const dx = t.clientX - lastTouch.x;
             const dy = t.clientY - lastTouch.y;
             setTransform(prev => ({ ...prev, x: prev.x + dx, y: prev.y + dy }));
             setLastTouch({ x: t.clientX, y: t.clientY });
         } else if (e.touches.length === 2 && initialDist) {
-            // Pinch Action
             const dist = getDist(e.touches[0], e.touches[1]);
             const delta = dist - initialDist;
-            const scaleFactor = delta * 0.005; // Sensitivity
+            const scaleFactor = delta * 0.005;
 
             setTransform(prev => ({
                 ...prev,
@@ -425,12 +427,8 @@ export default function SeatBooking() {
                         <p className="event-dt">
                             {location.state?.schedule
                                 ? new Date(location.state.schedule).toLocaleString('en-IN', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true
+                                    day: '2-digit', month: 'short', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit', hour12: true
                                 })
                                 : `${event.Date || event.date || "TBA"} • ${event.Time || event.time || "TBA"}`
                             }
@@ -464,9 +462,7 @@ export default function SeatBooking() {
                     </div>
                 </div>
 
-                {/* MAP SIDE (ZOOMABLE) */}
                 <div className="sb-map-side">
-                    {/* Controls */}
                     <div className="zoom-controls">
                         <button onClick={zoomIn} title="Zoom In">+</button>
                         <button onClick={zoomOut} title="Zoom Out">-</button>
@@ -520,17 +516,11 @@ export default function SeatBooking() {
                                                     key={seatId}
                                                     className={`seat ${statusClass}`}
                                                     onClick={(e) => {
-                                                        e.stopPropagation(); // prevent drag start
+                                                        e.stopPropagation();
                                                         !isPermanentlyBlocked && handleSeatClick(seatId, rowIndex);
                                                     }}
                                                     disabled={isPermanentlyBlocked || isBooked || (isLocked && !isBooked) || userHasBooking}
                                                     title={isLocked ? "Row locked" : seatId}
-                                                    onTouchEnd={(e) => {
-                                                        // Prevent click if we were dragging
-                                                        // A simple way is often just rely on onClick, 
-                                                        // but separating tap vs pan is better. 
-                                                        // For MVP, onClick works if no drag occurred.
-                                                    }}
                                                 >
                                                     {item.label.substring(1)}
                                                 </button>

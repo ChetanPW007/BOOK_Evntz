@@ -90,7 +90,7 @@ function NewBookingDialog({ onClose, onSaved }) {
             if (blocked) { bg = '#111'; cursor = 'not-allowed'; }
             else if (taken) { bg = '#555'; cursor = 'not-allowed'; }
             else if (selected) { bg = '#00dd00'; } // Green for selected
-            else if (vip) { bg = '#ffd700'; color: '#000'; } // Gold for VIP
+            else if (vip) { bg = '#ffd700'; } // Gold for VIP
 
             // VIP override for selected state (keep green but maybe add border?)
             if (selected) bg = '#00dd00';
@@ -380,11 +380,6 @@ export default function AdminBookings() {
 
   if (events === null) return <Loader />;
 
-  // Create New Booking Handler
-  const handleNewBooking = () => {
-    // Reload logic if needed, or just close dialog
-    load();
-  };
 
   // If event selected, show detail view
   if (selectedEvent) {

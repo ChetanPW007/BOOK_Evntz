@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import QuickAddAuditoriumModal from '../../components/admin/QuickAddAuditoriumModal';
 import { apiGet, apiPost, apiPut, apiDelete } from "../../utils/api";
 import Loader from "../../components/Loader";
@@ -149,11 +149,7 @@ function EventForm({ initial, onClose, onSaved }) {
   const [speakers, setSpeakers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [auditoriums, setAuditoriums] = useState([]); // Array of selected auditoriums
-  const [showAudiModal, setShowAudiModal] = useState(false);
-  const [showCoordinatorModal, setShowCoordinatorModal] = useState(false);
-
   const [loading, setLoading] = useState(false);
-  const [validating, setValidating] = useState(false);
 
   useEffect(() => {
     async function loadMeta() {
@@ -274,7 +270,7 @@ function EventForm({ initial, onClose, onSaved }) {
       checkConflicts(form.Schedules, form.Auditorium, form.Duration);
     }, 500); // 500ms debounce
     return () => clearTimeout(timer);
-  }, [form.Schedules, form.Auditorium, form.Duration]);
+  }, [form.Schedules, form.Auditorium, form.Duration, checkConflicts]);
 
 
   const addSchedule = () => {
@@ -291,23 +287,6 @@ function EventForm({ initial, onClose, onSaved }) {
   };
 
   // Handle Auditorium Change
-  const handleAuditoriumChange = (e) => {
-    const val = e.target.value;
-
-    // Find matching object
-    const matched = auditoriumList.find(a => a.Name === val);
-
-    if (matched) {
-      setForm(prev => ({
-        ...prev,
-        Auditorium: val,
-        Capacity: matched.Capacity,
-        SeatLayout: matched.SeatLayout, // Inherit layout
-      }));
-    } else {
-      setForm(prev => ({ ...prev, Auditorium: val }));
-    }
-  };
 
   const handleLayoutChange = (json) => {
     // Update capacity based on new layout
@@ -439,7 +418,6 @@ function EventForm({ initial, onClose, onSaved }) {
     // Sync legacy fields with first schedule
     const first = form.Schedules[0];
     // Use first auditorium as primary (for backward compatibility)
-    const primaryAuditorium = auditoriums[0];
     // Save all auditoriums as comma-separated string
     const auditoriumsString = auditoriums.join(', ');
 
@@ -480,7 +458,6 @@ function EventForm({ initial, onClose, onSaved }) {
     }
   };
 
-  const isHidden = form.Visibility !== "visible"; // "hidden" or "" vs "visible"
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -857,6 +834,24 @@ function EventForm({ initial, onClose, onSaved }) {
           </button>
         </div>
       </div>
+      {addPersonType && (
+        <AddPersonModal
+          type={addPersonType}
+          onClose={() => setAddPersonType(null)}
+          onSaved={async () => {
+            const c = await apiGet("/events/coordinators");
+            if (c && c.data) {
+              setCoordData(c.data);
+              setCoordOpts(c.data.map(i => (typeof i === 'string' ? i : i.Name)));
+            }
+            const s = await apiGet("/events/speakers");
+            if (s && s.data) {
+              setSpeakerData(s.data);
+              setSpeakerOpts(s.data.map(i => (typeof i === 'string' ? i : i.Name)));
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

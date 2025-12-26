@@ -8,16 +8,17 @@ export default function FeaturedSlider({ events }) {
     const [index, setIndex] = useState(0);
     const navigate = useNavigate();
 
-    // If no events, don't render slider
-    if (!events || events.length === 0) return null;
-
     // Auto-slide effect
     useEffect(() => {
+        if (!events || events.length === 0) return;
         const timer = setInterval(() => {
             nextSlide();
         }, 5000);
         return () => clearInterval(timer);
     }, [index, events]);
+
+    // If no events, don't render slider
+    if (!events || events.length === 0) return null;
 
     const nextSlide = () => {
         setIndex((prev) => (prev + 1) % events.length);
