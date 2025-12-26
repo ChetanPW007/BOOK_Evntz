@@ -6,6 +6,32 @@ import "./DeveloperSection.css";
 export default function DeveloperSection() {
     const [isFlipped, setIsFlipped] = useState(false);
 
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Minimum swipe distance (in px)
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null); // Reset
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe || isRightSwipe) {
+            setIsFlipped((prev) => !prev);
+        }
+    };
+
     const handleDoubleClick = () => {
         setIsFlipped(!isFlipped);
     };
@@ -26,7 +52,10 @@ export default function DeveloperSection() {
                 <div
                     className={`dev-card ${isFlipped ? "flipped" : ""}`}
                     onDoubleClick={handleDoubleClick}
-                    title="Double click to flip!"
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+                    title="Double click or swipe to flip!"
                 >
                     <div className="dev-card-inner">
 
