@@ -105,17 +105,8 @@ export default function UserHome() {
               ev.Visibility.toLowerCase() === "true"
           );
 
-          // Filter out past events
-          const now = new Date();
-          const futureEvents = visibleEvents.filter(ev => {
-            if (!ev.Date) return true; // Keep if no date
-            try {
-              const evDate = new Date(`${ev.Date} ${ev.Time || "23:59"}`);
-              return evDate >= now;
-            } catch { return true; }
-          });
-
-          const normalized = futureEvents.map((ev, i) => normalizeEvent(ev, i));
+          // Show all events (including past ones), just filtered by visibility
+          const normalized = visibleEvents.map((ev, i) => normalizeEvent(ev, i));
           setEvents(normalized);
           localStorage.setItem("cachedEvents", JSON.stringify(normalized));
         }
@@ -124,16 +115,10 @@ export default function UserHome() {
         const dataAudi = await apiGet("/auditoriums/");
 
         if (dataAudi.status === "success") {
-          // Filter: Status == Active AND has future events
-          const activeAuditoriums = dataAudi.data.filter(audi => {
-            const isActive = audi.Status?.toLowerCase() === "active";
-            // Check if any future event falls in this auditorium
-            // event.auditorium might be "Audi A, Audi B", so we check for inclusion
-            const hasEvent = normalized.some(ev =>
-              ev.auditorium && ev.auditorium.includes(audi.Name)
-            );
-            return isActive && hasEvent;
-          });
+          // Show all Active Auditoriums (Compatible Mode)
+          const activeAuditoriums = dataAudi.data.filter(audi =>
+            audi.Status?.toLowerCase() === "active"
+          );
 
           setAuditoriums(activeAuditoriums);
         }

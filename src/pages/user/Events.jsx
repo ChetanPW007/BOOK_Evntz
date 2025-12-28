@@ -67,40 +67,20 @@ export default function Events() {
             String(ev.Visibility).toLowerCase() === "true"
         );
 
-        // Filter out past events
-        const now = new Date();
-        const futureEvents = visibleEvents.filter((ev) => {
-          if (!ev.Date) return true;
-          try {
-            const evDate = new Date(`${ev.Date} ${ev.Time || "23:59"}`);
-            // Check if date is valid before comparing
-            if (isNaN(evDate.getTime())) return true;
-            return evDate >= now;
-          } catch {
-            return true;
-          }
-        });
-
-        if (futureEvents.length === 0) {
-          setError("No upcoming events found.");
+        if (visibleEvents.length === 0) {
+          setError("No events found.");
           setEvents([]);
         } else {
-          const normalized = futureEvents.map((ev, i) => normalizeEvent(ev, i));
+          const normalized = visibleEvents.map((ev, i) => normalizeEvent(ev, i));
           setEvents(normalized);
           localStorage.setItem("cachedEvents", JSON.stringify(normalized));
         }
 
         // --- Process Auditoriums ---
         if (auditoriumsData.status === "success" && Array.isArray(auditoriumsData.data)) {
-          const activeAuditoriums = auditoriumsData.data.filter(audi => {
-            const isActive = audi.Status?.toLowerCase() === "active";
-            // Check if any FUTURE event is in this auditorium
-            // Use 'normalized' derived from 'futureEvents'
-            const hasEvent = normalized.some(ev =>
-              ev.auditorium && ev.auditorium.includes(audi.Name)
-            );
-            return isActive && hasEvent;
-          });
+          const activeAuditoriums = auditoriumsData.data.filter(audi =>
+            audi.Status?.toLowerCase() === "active"
+          );
           setAuditoriums(activeAuditoriums);
         }
       } catch (err) {
