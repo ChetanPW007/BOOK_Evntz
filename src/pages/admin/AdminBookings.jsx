@@ -353,6 +353,23 @@ function EventBookingsList({ event, onBack }) {
 /* =========================================
    MAIN ADMIN BOOKINGS PAGE
    ========================================= */
+
+// Helper to format time to 12-hour AM/PM
+const formatTime = (timeStr) => {
+  if (!timeStr) return '';
+  try {
+    // Handle if it's already a full datetime or just time
+    const dateObj = timeStr.includes('T') ? new Date(timeStr) : new Date(`2000-01-01T${timeStr}`);
+    return dateObj.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  } catch (e) {
+    return timeStr; // Return original if parse fails
+  }
+};
+
 export default function AdminBookings() {
   const [events, setEvents] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -421,7 +438,7 @@ export default function AdminBookings() {
               </div>
               <div className="event-card-content">
                 <h3>{ev.Name}</h3>
-                <div className="event-meta">{ev.Date} • {ev.Time}</div>
+                <div className="event-meta">{ev.Date} • {formatTime(ev.Time)}</div>
 
                 {hasMultipleAuditoriums ? (
                   <>
