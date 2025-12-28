@@ -93,6 +93,7 @@ export default function VolunteerScanner() {
         eventId: slot.eventId,
         usn: scanInput,
         schedule: slot.schedule,
+        auditorium: slot.auditorium,
         attended: true
       };
 

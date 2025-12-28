@@ -15,12 +15,13 @@ def mark():
     event_id = data.get("eventId") or data.get("EventID") or data.get("event")
     usn = data.get("usn") or data.get("USN") or data.get("user")
     schedule = data.get("schedule") or data.get("Schedule")
+    auditorium = data.get("auditorium") or data.get("Auditorium")
     attended = data.get("attended", True)
     
     if not event_id or not usn:
         return jsonify({"status":"failed","message":"eventId and usn required"}), 400
         
-    ok = gs.mark_attendance(event_id, usn, attended, schedule=schedule)
+    ok = gs.mark_attendance(event_id, usn, attended, schedule=schedule, auditorium=auditorium)
     if ok:
         return jsonify({"status":"success"}), 200
     return jsonify({"status":"failed","message":"failed to mark attendance"}), 500

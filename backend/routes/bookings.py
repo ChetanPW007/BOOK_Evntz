@@ -42,6 +42,14 @@ def _merge_attendance(bookings_list):
                 b["Attended"] = "Yes"
                 b["AttendanceSource"] = "Scanner" # Optional debug info
                 
+                # Try to find the specific attendance row to get Auditorium
+                # Optimization: Could store auditorium in attended_keys map as value instead of just set presence
+                for row in attendance_rows:
+                     if str(row.get("EventID", "")).strip() == beid and str(row.get("USN", "")).strip().lower() == busn:
+                         if row.get("Auditorium"):
+                             b["AttendedAuditorium"] = str(row.get("Auditorium"))
+                         break
+                
     except Exception as e:
         print(f"Error merging attendance: {e}")
         # Return bookings as-is if merge fails to avoid breaking UI
