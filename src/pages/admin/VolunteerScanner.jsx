@@ -22,6 +22,8 @@ export default function VolunteerScanner() {
         const res = await apiGet("/events/");
         const allEvents = res.events || [];
         const today = new Date().toISOString().split("T")[0];
+        console.log("🔍 Scanner Debug: Today's date =", today);
+        console.log("🔍 Scanner Debug: Total events =", allEvents.length);
         const todaySlots = [];
 
         allEvents.forEach(ev => {
@@ -45,12 +47,19 @@ export default function VolunteerScanner() {
             schedules.push(`${ev.Date}T${ev.Time || "00:00"}:00`);
           }
 
+          console.log(`🔍 Event "${ev.Name}": schedules =`, schedules);
+
           // Filter for TODAY
           schedules.forEach(s => {
-            if (s.startsWith(today)) {
+            const scheduleDate = s.split("T")[0]; // Extract just the date part
+            console.log(`🔍 Comparing: "${scheduleDate}" === "${today}"`, scheduleDate === today);
+
+            if (scheduleDate === today) {
               const timeLabel = new Date(s).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
               // Extract ALL auditoriums for this event (comma separated)
               const audiList = (ev.Auditorium || "Main Auditorium").split(',').map(a => a.trim()).filter(Boolean);
+
+              console.log(`✅ TODAY's event: "${ev.Name}" at auditoriums:`, audiList);
 
               audiList.forEach(audi => {
                 todaySlots.push({
@@ -66,14 +75,16 @@ export default function VolunteerScanner() {
           });
         });
 
+        console.log("🔍 Total today slots found:", todaySlots.length);
         setSlots(todaySlots);
 
         // Extract unique Auditoriums that have events today
         const uniqueAudis = [...new Set(todaySlots.map(s => s.auditorium))].sort();
+        console.log("🔍 Unique auditoriums for today:", uniqueAudis);
         setActiveAuditoriums(uniqueAudis);
 
       } catch (err) {
-        console.error("Failed to load today's events", err);
+        console.error("❌ Failed to load today's events:", err);
       }
     }
     loadTodaySlots();
