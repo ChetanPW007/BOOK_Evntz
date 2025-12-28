@@ -15,8 +15,9 @@ const formatTimeLabel = (slot) => {
   const d = safeDate(slot);
   if (!d) return slot;
   return `${d.toLocaleDateString()} · ${d.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
   })}`;
 };
 
@@ -389,8 +390,9 @@ export default function EventDetails() {
                 onClick={() => handleTimeClick(s)}
               >
                 {new Date(s).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
                 })}
               </button>
             ))

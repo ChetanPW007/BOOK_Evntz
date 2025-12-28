@@ -48,7 +48,7 @@ export default function VolunteerScanner() {
           // Filter for TODAY
           schedules.forEach(s => {
             if (s.startsWith(today)) {
-              const timeLabel = new Date(s).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              const timeLabel = new Date(s).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
               // Extract ALL auditoriums for this event (comma separated)
               const audiList = (ev.Auditorium || "Main Auditorium").split(',').map(a => a.trim()).filter(Boolean);
 
