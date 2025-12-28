@@ -27,7 +27,6 @@ console.log("🔧 API Base URL:", BASE);
 async function request(path, opts = {}) {
   const url = BASE + path;
   const res = await fetch(url, {
-    credentials: "include",
     headers: { "Content-Type": "application/json" },
     ...opts,
   });
