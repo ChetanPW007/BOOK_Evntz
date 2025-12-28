@@ -58,7 +58,7 @@ export default function VolunteerScanner() {
                   eventName: ev.Name,
                   auditorium: audi,
                   schedule: s,
-                  label: `${ev.Name} (${timeLabel})`,
+                  label: `${ev.Name} @ ${audi} (${timeLabel})`,
                   key: `${ev.ID}_${s}_${audi}` // Unique key including auditorium
                 });
               });
