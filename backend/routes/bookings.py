@@ -256,3 +256,49 @@ def bookings_for_user(usn):
     except Exception as e:
         print(f"Error fetching user bookings: {e}")
         return jsonify({"status":"failed", "message": str(e)}), 500
+
+@booking_blueprint.route("/lookup", methods=["POST"])
+def lookup_booking():
+    """
+    Lookup booking by BookingID or USN for manual scanner entry.
+    Returns: booking info including EventID, USN, Seats
+    """
+    data = request.json or {}
+    booking_id = data.get("bookingId") or data.get("BookingID")
+    usn = data.get("usn") or data.get("USN")
+    event_id = data.get("eventId") or data.get("EventID")
+    
+    if not booking_id and not usn:
+        return jsonify({"status":"failed", "message": "BookingID or USN required"}), 400
+    
+    try:
+        all_bookings = gs.get_bookings()
+        
+        # Search by BookingID first (most specific)
+        if booking_id:
+            booking = next((b for b in all_bookings if str(b.get("BookingID")).strip().lower() == str(booking_id).strip().lower()), None)
+            if booking:
+                return jsonify({"status":"success", "data": booking}), 200
+        
+        # Search by USN + EventID
+        if usn and event_id:
+            booking = next((b for b in all_bookings 
+                           if str(b.get("USN")).strip().lower() == str(usn).strip().lower() 
+                           and str(b.get("EventID")).strip() == str(event_id).strip()), None)
+            if booking:
+                return jsonify({"status":"success", "data": booking}), 200
+        
+        # Search by USN only (return first match or list)
+        if usn:
+            bookings = [b for b in all_bookings if str(b.get("USN")).strip().lower() == str(usn).strip().lower()]
+            if len(bookings) == 1:
+                return jsonify({"status":"success", "data": bookings[0]}), 200
+            elif len(bookings) > 1:
+                return jsonify({"status":"multiple", "message": "Multiple bookings found", "data": bookings}), 200
+        
+        return jsonify({"status":"failed", "message": "Booking not found"}), 404
+        
+    except Exception as e:
+        print(f"Error looking up booking: {e}")
+        return jsonify({"status":"failed", "message": str(e)}), 500
+
