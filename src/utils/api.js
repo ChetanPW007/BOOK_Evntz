@@ -26,8 +26,14 @@ console.log("🔧 API Base URL:", BASE);
 
 async function request(path, opts = {}) {
   const url = BASE + path;
+  const headers = { ...opts.headers };
+  // Only send Content-Type for requests with a body (POST/PUT) to avoid CORS Preflight on GET
+  if (opts.method === "POST" || opts.method === "PUT") {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    headers,
     ...opts,
   });
 
