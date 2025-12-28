@@ -105,8 +105,20 @@ export default function UserHome() {
               ev.Visibility.toLowerCase() === "true"
           );
 
-          // Show all events (including past ones), just filtered by visibility
-          const normalized = visibleEvents.map((ev, i) => normalizeEvent(ev, i));
+          // Filter out past events
+          const now = new Date();
+          const futureEvents = visibleEvents.filter(ev => {
+            if (!ev.Date) return true; // Keep if no date
+            try {
+              // Parse "YYYY-MM-DD" + "HH:mm"
+              const evDate = new Date(`${ev.Date}T${ev.Time || "23:59"}`);
+              // If invalid date, keep it visible just in case
+              if (isNaN(evDate.getTime())) return true;
+              return evDate >= now;
+            } catch { return true; }
+          });
+
+          const normalized = futureEvents.map((ev, i) => normalizeEvent(ev, i));
           setEvents(normalized);
           localStorage.setItem("cachedEvents", JSON.stringify(normalized));
         }

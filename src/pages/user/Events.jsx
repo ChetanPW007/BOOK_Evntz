@@ -67,11 +67,24 @@ export default function Events() {
             String(ev.Visibility).toLowerCase() === "true"
         );
 
-        if (visibleEvents.length === 0) {
-          setError("No events found.");
+        // Filter out past events
+        const now = new Date();
+        const futureEvents = visibleEvents.filter((ev) => {
+          if (!ev.Date) return true;
+          try {
+            const evDate = new Date(`${ev.Date}T${ev.Time || "23:59"}`);
+            if (isNaN(evDate.getTime())) return true;
+            return evDate >= now;
+          } catch {
+            return true;
+          }
+        });
+
+        if (futureEvents.length === 0) {
+          setError("No upcoming events found.");
           setEvents([]);
         } else {
-          const normalized = visibleEvents.map((ev, i) => normalizeEvent(ev, i));
+          const normalized = futureEvents.map((ev, i) => normalizeEvent(ev, i));
           setEvents(normalized);
           localStorage.setItem("cachedEvents", JSON.stringify(normalized));
         }
