@@ -8,7 +8,9 @@ import "./VolunteerScanner.css";
 export default function VolunteerScanner() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedAuditorium, setSelectedAuditorium] = useState(null);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [auditoriums, setAuditoriums] = useState([]);
     const [events, setEvents] = useState([]);
 
     // Mode: 'scan' | 'manual'
@@ -17,7 +19,7 @@ export default function VolunteerScanner() {
 
     // Scanning state
     const [scanning, setScanning] = useState(false);
-    const [scanResult, setScanResult] = useState(null); // { type: "success"|"error", message: "..." }
+    const [scanResult, setScanResult] = useState(null); // { type: "success"|"error"|"duplicate", message: "..." }
     const videoRef = useRef(null);
     const scannerRef = useRef(null);
 
@@ -28,12 +30,12 @@ export default function VolunteerScanner() {
 
     // Page check - hide on landing and login pages
     const currentPath = location.pathname;
-    const hideOnPages = ["/", "/login", "/register"]; // Hide on home page too if you want, but user asked for float
+    const hideOnPages = ["/", "/login", "/register"];
     const shouldHide = hideOnPages.includes(currentPath);
 
     useEffect(() => {
         if (isOpen && isAuthorized) {
-            loadEvents();
+            loadTodayEvents();
         }
     }, [isOpen, isAuthorized]);
 
@@ -45,27 +47,61 @@ export default function VolunteerScanner() {
     // Hide scanner button on landing/login pages or if not authorized
     if (!isAuthorized || shouldHide) return null;
 
-    async function loadEvents() {
+    async function loadTodayEvents() {
         try {
             const res = await apiGet("/events/");
-            if (res.events) {
-                // Today's date string in "YYYY-MM-DD" or similar format
-                // The Google Sheets date format is usually YYYY-MM-DD
-                const todayStr = new Date().toISOString().split('T')[0];
+            const allEvents = res.events || [];
+            const today = new Date().toISOString().split("T")[0];
+            const todaySlots = [];
 
-                // Filter for events happening today
-                const todayEvents = res.events.filter(ev => {
-                    if (!ev.Date) return false;
-                    // Standardize both to YYYY-MM-DD for comparison
+            allEvents.forEach(ev => {
+                let schedules = [];
+
+                // Parse schedules
+                if (ev.Schedules) {
                     try {
-                        const evDate = new Date(ev.Date).toISOString().split('T')[0];
-                        return evDate === todayStr;
-                    } catch {
-                        return false;
+                        const parsed = typeof ev.Schedules === 'string' ? JSON.parse(ev.Schedules) : ev.Schedules;
+                        if (Array.isArray(parsed)) {
+                            schedules = parsed.map(s => {
+                                if (s.Date && s.Time) return `${s.Date}T${s.Time}:00`;
+                                return null;
+                            }).filter(Boolean);
+                        }
+                    } catch (e) { console.warn("Schedules parse error", e); }
+                }
+
+                // Fallback if no schedules
+                if (schedules.length === 0 && ev.Date) {
+                    schedules.push(`${ev.Date}T${ev.Time || "00:00"}:00`);
+                }
+
+                // Filter for TODAY
+                schedules.forEach(s => {
+                    const scheduleDate = s.split("T")[0];
+                    if (scheduleDate === today) {
+                        const timeLabel = new Date(s).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+                        const audiList = (ev.Auditorium || "Main Auditorium").split(',').map(a => a.trim()).filter(Boolean);
+
+                        audiList.forEach(audi => {
+                            todaySlots.push({
+                                eventId: ev.ID,
+                                eventName: ev.Name,
+                                auditorium: audi,
+                                schedule: s,
+                                label: `${ev.Name} @ ${audi} (${timeLabel})`,
+                                key: `${ev.ID}_${s}_${audi}`
+                            });
+                        });
                     }
                 });
-                setEvents(todayEvents);
-            }
+            });
+
+            setEvents(todaySlots);
+
+            // Extract unique Auditoriums
+            const uniqueAudis = [...new Set(todaySlots.map(s => s.auditorium))].sort();
+            setAuditoriums(uniqueAudis);
+
         } catch (e) {
             console.error("Failed to load events", e);
         }
@@ -123,18 +159,26 @@ export default function VolunteerScanner() {
     const processCheckIn = async (identifier) => {
         try {
             const res = await apiPost("/attendance/mark", {
-                usn: identifier, // The backend seems to expect 'usn' or 'bookingId' - simplifying to generic identifier
-                eventId: selectedEvent.id || selectedEvent.ID
+                usn: identifier,
+                eventId: selectedEvent.eventId,
+                auditorium: selectedEvent.auditorium,
+                schedule: selectedEvent.schedule
             });
 
             if (res.status === "success" || res.success) {
-                setScanResult({ type: "success", message: "Check-in Approved", details: res.data || { id: identifier } });
+                setScanResult({ type: "success", message: "✅ Check-in Approved", details: res.data || { id: identifier } });
+            } else if (res.status === "duplicate") {
+                setScanResult({ type: "duplicate", message: "⛔ ALREADY ENTERED", details: { message: res.message } });
             } else {
-                setScanResult({ type: "error", message: res.message || "Check-in Failed" });
+                setScanResult({ type: "error", message: res.message || "❌ Check-in Failed" });
             }
         } catch (err) {
             console.error(err);
-            setScanResult({ type: "error", message: "Network Error or server unreachable." });
+            if (err.response?.status === 409) {
+                setScanResult({ type: "duplicate", message: "⛔ ALREADY ENTERED", details: { message: "This ticket was already scanned" } });
+            } else {
+                setScanResult({ type: "error", message: "Network Error or server unreachable." });
+            }
         }
     };
 
@@ -145,6 +189,11 @@ export default function VolunteerScanner() {
             scannerRef.current.start();
         }
     };
+
+    // Filter events for selected auditorium
+    const availableEvents = selectedAuditorium
+        ? events.filter(e => e.auditorium === selectedAuditorium)
+        : [];
 
     // --- RENDER ---
 
@@ -165,41 +214,61 @@ export default function VolunteerScanner() {
             <div className="scanner-box">
                 <div className="scanner-header">
                     <h3>🎫 VIP Access Control</h3>
-                    <button className="close-btn" onClick={() => { stopScanner(); setIsOpen(false); }}>✕</button>
+                    <button className="close-btn" onClick={() => { stopScanner(); setIsOpen(false); setSelectedAuditorium(null); setSelectedEvent(null); }}>✕</button>
                 </div>
 
-                {/* STEP 1: Select Event */}
-                {!selectedEvent && (
+                {/* STEP 1: Select Auditorium */}
+                {!selectedAuditorium && (
                     <div className="scanner-step">
-                        <p className="muted" style={{ marginBottom: '10px' }}>Select active event:</p>
+                        <p className="muted" style={{ marginBottom: '10px' }}>1. Select Auditorium (Today):</p>
                         <div className="v-event-list">
-                            {events.map(ev => (
-                                <div key={ev.ID || ev.id} className="v-event-item" onClick={() => setSelectedEvent(ev)}>
-                                    <strong>{ev.Name || ev.name}</strong>
-                                    <span>{ev.Date || ev.date}</span>
+                            {auditoriums.map(audi => (
+                                <div key={audi} className="v-event-item" onClick={() => setSelectedAuditorium(audi)}>
+                                    <strong>🏛️ {audi}</strong>
                                 </div>
                             ))}
-                            {events.length === 0 && <p className="muted">No events found</p>}
+                            {auditoriums.length === 0 && <p className="muted">No auditoriums have events today</p>}
                         </div>
                     </div>
                 )}
 
-                {/* STEP 2: Main Scanner UI */}
+                {/* STEP 2: Select Event */}
+                {selectedAuditorium && !selectedEvent && (
+                    <div className="scanner-step">
+                        <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <p className="muted">2. Select Event at <strong>{selectedAuditorium}</strong>:</p>
+                            <button className="text-btn" onClick={() => setSelectedAuditorium(null)}>← Back</button>
+                        </div>
+                        <div className="v-event-list">
+                            {availableEvents.map(ev => (
+                                <div key={ev.key} className="v-event-item" onClick={() => setSelectedEvent(ev)}>
+                                    <strong>{ev.label}</strong>
+                                </div>
+                            ))}
+                            {availableEvents.length === 0 && <p className="muted">No events at this auditorium today</p>}
+                        </div>
+                    </div>
+                )}
+
+                {/* STEP 3: Main Scanner UI */}
                 {selectedEvent && !scanResult && (
                     <>
                         <div style={{ padding: '15px 24px 0' }}>
                             <div className="scanner-info" style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ color: '#fff', fontWeight: 600 }}>{selectedEvent.Name || selectedEvent.name}</span>
-                                <button className="text-btn" onClick={() => { stopScanner(); setSelectedEvent(null); }}>Switch Event</button>
+                                <div>
+                                    <span style={{ color: '#fff', fontWeight: 600, display: 'block' }}>{selectedEvent.eventName}</span>
+                                    <small style={{ color: '#888' }}>@ {selectedEvent.auditorium}</small>
+                                </div>
+                                <button className="text-btn" onClick={() => { stopScanner(); setSelectedEvent(null); }}>← Back</button>
                             </div>
                         </div>
 
                         <div className="scanner-tabs">
                             <button className={`tab-btn ${mode === 'scan' ? 'active' : ''}`} onClick={() => setMode('scan')}>
-                                Camera Scan
+                                📷 Camera Scan
                             </button>
                             <button className={`tab-btn ${mode === 'manual' ? 'active' : ''}`} onClick={() => setMode('manual')}>
-                                Manual Entry
+                                ✍️ Manual Entry
                             </button>
                         </div>
 
@@ -239,20 +308,28 @@ export default function VolunteerScanner() {
                     </>
                 )}
 
-                {/* STEP 3: Result */}
+                {/* STEP 4: Result */}
                 {scanResult && (
                     <div className="scanner-step">
                         <div className={`scan-result ${scanResult.type}`}>
                             <div className="result-icon">
-                                {scanResult.type === "success" ? "✅" : "❌"}
+                                {scanResult.type === "success" && "✅"}
+                                {scanResult.type === "duplicate" && "⛔"}
+                                {scanResult.type === "error" && "❌"}
                             </div>
-                            <h4>{scanResult.type === "success" ? "ACCESS GRANTED" : "ACCESS DENIED"}</h4>
+                            <h4 style={{
+                                color: scanResult.type === "success" ? "#4caf50" : scanResult.type === "duplicate" ? "#ff4444" : "#ff9800"
+                            }}>
+                                {scanResult.type === "success" && "ACCESS GRANTED"}
+                                {scanResult.type === "duplicate" && "ALREADY ENTERED"}
+                                {scanResult.type === "error" && "ACCESS DENIED"}
+                            </h4>
                             <p style={{ color: '#ccc' }}>{scanResult.message}</p>
 
                             {scanResult.details && (
                                 <div className="scan-details">
-                                    <p><strong>ID:</strong> {scanResult.details.id || scanResult.details.usn || "N/A"}</p>
-                                    <p><strong>Status:</strong> Checked In</p>
+                                    {scanResult.details.id && <p><strong>ID:</strong> {scanResult.details.id}</p>}
+                                    {scanResult.details.message && <p>{scanResult.details.message}</p>}
                                 </div>
                             )}
 
