@@ -939,6 +939,26 @@ export default function AdminEvents() {
   const [viewAttendees, setViewAttendees] = useState(null); // Event object
   const [edit, setEdit] = useState(null);
 
+  // Sorting State
+  const [sortOrder, setSortOrder] = useState('none'); // 'none', 'newest', 'oldest'
+
+  // Filter/Sort Logic
+  const getSortedEvents = () => {
+    if (!events) return [];
+    let processed = [...events];
+
+    if (sortOrder !== 'none') {
+      processed.sort((a, b) => {
+        const dateA = new Date(`${a.Date}T${a.Time || '00:00'}`);
+        const dateB = new Date(`${b.Date}T${b.Time || '00:00'}`);
+        return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+      });
+    }
+    return processed;
+  };
+
+  const sortedEvents = getSortedEvents();
+
   async function load() {
     const res = await apiGet("/events/");
     setEvents(res.events || res || []);
@@ -980,15 +1000,30 @@ export default function AdminEvents() {
     <div className="fade-in">
       <div className="admin-topbar">
         <h1 className="admin-page-title">Events Management</h1>
-        <button
-          className="admin-btn"
-          onClick={() => {
-            setEdit(null);
-            setShowForm(true);
-          }}
-        >
-          + Add New Event
-        </button>
+
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {/* SORT DROPDOWN */}
+          <select
+            className="admin-actions select"
+            style={{ padding: '10px', borderRadius: '8px', background: '#333', color: '#fff', border: '1px solid #444' }}
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option value="none">Sort: Default</option>
+            <option value="newest">Date: Newest to Oldest</option>
+            <option value="oldest">Date: Oldest to Newest</option>
+          </select>
+
+          <button
+            className="admin-btn"
+            onClick={() => {
+              setEdit(null);
+              setShowForm(true);
+            }}
+          >
+            + Add New Event
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -1006,7 +1041,7 @@ export default function AdminEvents() {
       )}
 
       <div className="admin-events-grid">
-        {events.map((ev) => {
+        {sortedEvents.map((ev) => {
           const id = ev.ID || ev.id || ev.Id;
           const isVisible = (ev.Visibility === "visible");
           // Calculate registered count if available? 

@@ -92,9 +92,15 @@ export default function Events() {
 
         // --- Process Auditoriums ---
         if (auditoriumsData.status === "success" && Array.isArray(auditoriumsData.data)) {
-          const activeAuditoriums = auditoriumsData.data.filter(
-            (audi) => audi.Status?.toLowerCase() === "active"
-          );
+          const activeAuditoriums = auditoriumsData.data.filter(audi => {
+            const isActive = audi.Status?.toLowerCase() === "active";
+            // Check if any FUTURE event is in this auditorium
+            // Use 'normalized' derived from 'futureEvents'
+            const hasEvent = normalized.some(ev =>
+              ev.auditorium && ev.auditorium.includes(audi.Name)
+            );
+            return isActive && hasEvent;
+          });
           setAuditoriums(activeAuditoriums);
         }
       } catch (err) {

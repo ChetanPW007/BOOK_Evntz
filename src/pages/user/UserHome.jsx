@@ -125,10 +125,15 @@ export default function UserHome() {
 
         if (dataAudi.status === "success") {
           // Filter: Status == Active AND has future events
-          // Filter: Status == Active
-          const activeAuditoriums = dataAudi.data.filter(audi =>
-            audi.Status?.toLowerCase() === "active"
-          );
+          const activeAuditoriums = dataAudi.data.filter(audi => {
+            const isActive = audi.Status?.toLowerCase() === "active";
+            // Check if any future event falls in this auditorium
+            // event.auditorium might be "Audi A, Audi B", so we check for inclusion
+            const hasEvent = normalized.some(ev =>
+              ev.auditorium && ev.auditorium.includes(audi.Name)
+            );
+            return isActive && hasEvent;
+          });
 
           setAuditoriums(activeAuditoriums);
         }
