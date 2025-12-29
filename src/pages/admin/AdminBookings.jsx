@@ -12,6 +12,7 @@ function NewBookingDialog({ onClose, onSaved }) {
   const [form, setForm] = useState({
     userMs: "",
     eventId: "",
+    auditorium: "",
     seats: 1, // Fallback for manual
     selectedSeats: [] // Array of seat IDs
   });
@@ -167,6 +168,7 @@ function NewBookingDialog({ onClose, onSaved }) {
       const res = await apiPost("/bookings/add", {
         USN: form.userMs,
         EventID: form.eventId,
+        Auditorium: form.auditorium,
         Seats: finalSeats, // Can be "5" or "A1,A2"
         Status: "CONFIRMED"
       });
@@ -205,6 +207,23 @@ function NewBookingDialog({ onClose, onSaved }) {
             </div>
           </div>
 
+          {/* Auditorium Selector - shown when event with multiple auditoriums is selected */}
+          {selectedEventObj && selectedEventObj.Auditorium && (
+            <div style={{ marginTop: '10px' }}>
+              <label>Select Auditorium</label>
+              <select
+                value={form.auditorium}
+                onChange={e => setForm({ ...form, auditorium: e.target.value })}
+                style={{ width: '100%', padding: '10px', background: '#111', color: '#fff', border: '1px solid #333', borderRadius: '8px' }}
+              >
+                <option value="">-- Choose Auditorium --</option>
+                {selectedEventObj.Auditorium.split(',').map((audi, idx) => (
+                  <option key={idx} value={audi.trim()}>{audi.trim()}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <label>Seat Selection {form.selectedSeats.length > 0 ? `(${form.selectedSeats.length} Selected)` : ''}</label>
             {selectedEventObj?.SeatLayout ? (
@@ -236,8 +255,9 @@ function EventBookingsList({ event, onBack }) {
   const [filterStatus, setFilterStatus] = useState("All");
 
   async function load() {
-    // Optimized: Fetch only for this event
-    const res = await apiGet(`/bookings/event/${event.ID}`);
+    // Optimized: Fetch only for this event AND auditorium
+    const auditoriumParam = event.Auditorium ? `?auditorium=${encodeURIComponent(event.Auditorium)}` : '';
+    const res = await apiGet(`/bookings/event/${event.ID}${auditoriumParam}`);
     setBookings(res.data || res || []);
   }
 
@@ -322,7 +342,20 @@ function EventBookingsList({ event, onBack }) {
                   </td>
                   <td>
                     {isAttended ? (
-                      <span className="status-badge green">CHECKED IN</span>
+                      <>
+                        <span className="status-badge green">CHECKED IN</span>
+                        {b.AttendedAuditorium && (
+                          <div style={{ fontSize: '11px', marginTop: '4px' }}>
+                            {b.AttendedAuditorium === event.Auditorium ? (
+                              <span style={{ color: '#2ecc71' }}>📍 {b.AttendedAuditorium}</span>
+                            ) : (
+                              <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                                ⚠️ Wrong Hall: {b.AttendedAuditorium}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <span className="status-badge gray" style={{ opacity: 0.5 }}>Not Arrived</span>
                     )}

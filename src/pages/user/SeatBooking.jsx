@@ -267,6 +267,7 @@ export default function SeatBooking() {
             const payload = {
                 USN: usn,
                 EventID: eventId,
+                Auditorium: event.Auditorium,
                 Seats: selectedSeat, // Single string
                 Schedule: schedule
             };

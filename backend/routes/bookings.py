@@ -128,6 +128,7 @@ def add_booking():
         "USN": usn,
         "EventID": event_id,
         "Seats": seats_str,
+        "Auditorium": data.get("Auditorium") or data.get("auditorium") or "",
         "QR URL": data.get("QR URL") or data.get("qr") or f"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={urllib.parse.quote_plus(str({'bookingId': data.get('BookingID') or chosen_id}))}",
         "Status": data.get("Status") or data.get("status") or "CONFIRMED",
         "Timestamp": data.get("Timestamp") or datetime.utcnow().timestamp(),
@@ -202,6 +203,16 @@ def scan_booking():
 def bookings_for_event(event_id):
     bookings = gs.get_bookings()
     filtered = [b for b in bookings if str(b.get("EventID","")) == str(event_id)]
+    
+    # NEW: Filter by auditorium if provided as query parameter
+    auditorium_param = request.args.get("auditorium")
+    if auditorium_param:
+        # Filter to only bookings for this specific auditorium
+        # Match on Auditorium field OR AttendedAuditorium (for legacy/attendance-merged data)
+        filtered = [b for b in filtered if 
+                   str(b.get("Auditorium", "")).strip().lower() == str(auditorium_param).strip().lower() or
+                   str(b.get("AttendedAuditorium", "")).strip().lower() == str(auditorium_param).strip().lower()]
+    
     filtered = _merge_attendance(filtered)
     return jsonify({"status":"success","data": filtered}), 200
 
