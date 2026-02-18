@@ -24,9 +24,12 @@ def login():
     users = gs.get_users()
     print(f"DEBUG: Checking against {len(users)} users in sheet")
 
-    # Helper to clean phone numbers (remove .0 from Google Sheets)
+    # Helper to clean phone numbers:
+    # - Remove .0 suffix from Google Sheets numeric storage (e.g., "7349107584.0" -> "7349107584")
+    # - Strip leading zeros (Google Sheets drops them for numeric cells, e.g., "0011223344" -> "11223344")
     def clean_phone(val):
         s = str(val).split('.')[0].strip()
+        s = s.lstrip('0') or '0'  # strip leading zeros, keep '0' if all zeros
         return s
 
     print(f"DEBUG: Trying to match loginId='{login_id}' (cleaned phone='{clean_phone(login_id)}') role='{role}'")
