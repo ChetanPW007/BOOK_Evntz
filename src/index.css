@@ -26,8 +26,8 @@ html,
 body,
 #root {
   height: 100%;
-  background-color: #050505;
-  /* Fallback */
+  background-color: #3b0b0b;
+  /* Match gradient start — prevents black gap below fixed header */
 }
 
 body {
