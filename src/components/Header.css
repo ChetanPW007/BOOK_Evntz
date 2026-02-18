@@ -38,10 +38,14 @@
 }
 
 .header-title {
-  font-size: 1.25rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
   font-weight: 600;
+  font-style: italic;
   color: #fae38c;
   white-space: nowrap;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 8px rgba(250, 227, 140, 0.3);
 }
 
 /* ---------- NAV ---------- */
