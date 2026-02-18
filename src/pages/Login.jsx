@@ -211,7 +211,7 @@ export default function Login() {
             ) : (
               <input
                 name="usn"
-                placeholder="USN / Username"
+                placeholder="USN / Phone Number"
                 onChange={handleChange}
                 disabled={loading}
               />

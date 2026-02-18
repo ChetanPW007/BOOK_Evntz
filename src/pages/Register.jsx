@@ -45,8 +45,8 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation: required fields
-    const requiredFields = ["name", "email", "usn", "college", "branch", "sem", "phone", "password"];
+    // Validation: required fields (Only Name, Email, Phone, Password)
+    const requiredFields = ["name", "email", "phone", "password"];
     for (let field of requiredFields) {
       if (!formData[field]) {
         showToast("error", `Please fill ${field}`);
@@ -61,10 +61,10 @@ export default function Register() {
       const response = await apiPost("/users/add", {
         name: formData.name,
         email: formData.email,
-        usn: formData.usn,
-        college: formData.college,
-        branch: formData.branch,
-        sem: formData.sem,
+        usn: formData.usn || "",      // Optional
+        college: formData.college || "", // Optional
+        branch: formData.branch || "",   // Optional
+        sem: formData.sem || "",         // Optional
         phone: formData.phone,
         password: formData.password,
         role: "user",
@@ -111,10 +111,13 @@ export default function Register() {
 
         <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        <input type="text" name="usn" placeholder="USN" value={formData.usn} onChange={handleChange} required />
-        <input type="text" name="college" placeholder="College" value={formData.college} onChange={handleChange} required />
-        <input type="text" name="branch" placeholder="Branch" value={formData.branch} onChange={handleChange} required />
-        <input type="number" name="sem" placeholder="Semester" value={formData.sem} onChange={handleChange} required />
+
+        {/* Optional Fields */}
+        <input type="text" name="usn" placeholder="USN (Optional)" value={formData.usn} onChange={handleChange} />
+        <input type="text" name="college" placeholder="College (Optional)" value={formData.college} onChange={handleChange} />
+        <input type="text" name="branch" placeholder="Branch (Optional)" value={formData.branch} onChange={handleChange} />
+        <input type="number" name="sem" placeholder="Semester (Optional)" value={formData.sem} onChange={handleChange} />
+
         <input type="text" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
         <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
 

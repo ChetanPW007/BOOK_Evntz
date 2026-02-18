@@ -57,7 +57,11 @@ def login():
         user_copy.pop("Password", None)
         user_copy["role"] = u_role
 
-        print(f"DEBUG: Login successful for {userData['Name'] if (userData:=user_copy) else login_id}")
+        if u_role == "admin":
+             print(f"DEBUG: Login successful for Admin: {login_id}")
+        else:
+             print(f"DEBUG: Login successful for User: {u.get('Name', 'Unknown')} ({u_phone})")
+        
         return jsonify({
             "status": "success",
             "message": "Login successful",
