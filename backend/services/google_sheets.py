@@ -9,6 +9,7 @@ from backend.config import (
 )
 from datetime import datetime
 import uuid
+import time
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
@@ -29,22 +30,54 @@ class GoogleSheets:
             
         client = gspread.authorize(creds)
         self.sheet = client.open_by_key(SPREADSHEET_ID)
+        self._ws_cache = {}
+        self._data_cache = {}
+        self._last_read = {}  # sheet_name -> timestamp
+        self.CACHE_TTL = 10    # 10 seconds cache
 
     # ---------- Generic helpers ----------
     def _worksheet(self, name):
+        if name in self._ws_cache:
+            return self._ws_cache[name]
+            
         try:
-            return self.sheet.worksheet(name)
+            ws = self.sheet.worksheet(name)
+            self._ws_cache[name] = ws
+            return ws
         except gspread.exceptions.WorksheetNotFound:
             # Auto-create if missing (Generic fallback)
             # Default 1000 rows, 26 cols
-            return self.sheet.add_worksheet(title=name, rows=1000, cols=26)
+            ws = self.sheet.add_worksheet(title=name, rows=1000, cols=26)
+            self._ws_cache[name] = ws
+            return ws
 
     def _headers(self, worksheet):
         return worksheet.row_values(1)
 
+    def _clear_cache(self, sheet_name):
+        """Invalidates data cache for a specific sheet"""
+        if sheet_name in self._data_cache:
+            del self._data_cache[sheet_name]
+        if sheet_name in self._last_read:
+            del self._last_read[sheet_name]
+
     def read_range(self, sheet_name):
+        now = time.time()
+        # Return cached data if valid
+        if sheet_name in self._data_cache:
+            last_time = self._last_read.get(sheet_name, 0)
+            if now - last_time < self.CACHE_TTL:
+                print(f"⚡ Cache Hit: {sheet_name}")
+                return self._data_cache[sheet_name]
+
+        print(f"🌐 API Fetch: {sheet_name}")
         ws = self._worksheet(sheet_name)
-        return ws.get_all_records()
+        data = ws.get_all_records()
+        
+        # Update cache
+        self._data_cache[sheet_name] = data
+        self._last_read[sheet_name] = now
+        return data
 
     def append_row(self, sheet_name, row_dict):
         ws = self._worksheet(sheet_name)
@@ -99,6 +132,7 @@ class GoogleSheets:
             row.append(val_str)
             
         ws.append_row(row)
+        self._clear_cache(sheet_name)
         return True
 
     def write_row_by_index(self, sheet_name, row_index, row_dict):
@@ -151,6 +185,7 @@ class GoogleSheets:
             return s
         last_col_letter = col_letter(last_col)
         ws.update(f"A{row_index}:{last_col_letter}{row_index}", [row])
+        self._clear_cache(sheet_name)
         return True
 
     def find_row_index(self, sheet_name, key_col_name, key_value):
@@ -162,11 +197,12 @@ class GoogleSheets:
 
     def delete_rows_matching(self, sheet_name, key_col_name, key_value):
         ws = self._worksheet(sheet_name)
-        rows = ws.get_all_records()
+        rows = self.read_range(sheet_name)
         # delete from bottom up so indices remain valid
         for i in range(len(rows), 0, -1):
             if str(rows[i-1].get(key_col_name, "")).strip() == str(key_value):
                 ws.delete_rows(i+1)
+        self._clear_cache(sheet_name)
 
     # ---------- Users ----------
     def get_users(self):
