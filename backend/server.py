@@ -20,11 +20,40 @@ ALLOWED_ORIGINS = [
 
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
-# ✅ Register blueprints
-app.register_blueprint(user_blueprint, url_prefix="/api/users")
-app.register_blueprint(booking_blueprint, url_prefix="/api/bookings")
-app.register_blueprint(event_blueprint, url_prefix="/api/events")
-app.register_blueprint(attendance_bp, url_prefix="/api/attendance")
+# ✅ Register blueprints with error handling
+try:
+    app.register_blueprint(user_blueprint, url_prefix="/api/users")
+    print("✅ Registered user_blueprint")
+except Exception as e:
+    print(f"❌ Failed to register user_blueprint: {e}")
+
+try:
+    app.register_blueprint(booking_blueprint, url_prefix="/api/bookings")
+    print("✅ Registered booking_blueprint")
+except Exception as e:
+    print(f"❌ Failed to register booking_blueprint: {e}")
+
+try:
+    app.register_blueprint(event_blueprint, url_prefix="/api/events")
+    print("✅ Registered event_blueprint")
+except Exception as e:
+    print(f"❌ Failed to register event_blueprint: {e}")
+
+try:
+    app.register_blueprint(attendance_bp, url_prefix="/api/attendance")
+    print("✅ Registered attendance_bp")
+except Exception as e:
+    print(f"❌ Failed to register attendance_bp: {e}")
+
+@app.route("/api/debug/routes")
+def list_routes():
+    import urllib
+    output = []
+    for rule in app.url_map.iter_rules():
+        methods = ','.join(rule.methods)
+        line = urllib.parse.unquote(f"{rule.endpoint:50s} {methods:20s} {rule}")
+        output.append(line)
+    return jsonify(sorted(output))
 
 @app.route("/")
 def home():

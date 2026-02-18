@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request
 from backend.services.google_sheets import gs
 
+print("✅ users.py module loaded")
+
+
 user_blueprint = Blueprint("users", __name__)
 
 # ------------------------------------------------------
