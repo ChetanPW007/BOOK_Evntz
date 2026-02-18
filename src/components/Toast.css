@@ -6,7 +6,7 @@
 /* Container Positioning - Upper Middle Screen */
 .Toastify__toast-container {
   width: 420px !important;
-  font-family: 'Outfit', sans-serif !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
   padding: 12px !important;
   top: 100px !important;
   /* Upper-middle positioning */
