@@ -22,7 +22,7 @@ export default function LandingPage() {
           Welcome to GM University Venue Registration
         </h1>
 
-        <button className="btn-gmu fade-up" onClick={() => navigate("/register")}>
+        <button className="btn-gmu fade-up" onClick={() => navigate("/login")}>
           LET'S GO
         </button>
 
