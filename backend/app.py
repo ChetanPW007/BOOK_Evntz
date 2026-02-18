@@ -15,18 +15,22 @@ app = Flask(__name__)
 # ---------------------------
 # CORS Configuration
 # ---------------------------
-# In production, you should restrict this to specific domains
+# Allow localhost, production, and ALL Vercel preview deployments
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://turbo007.pythonanywhere.com",
     "https://book-evntz.vercel.app",
+    "https://book-evntz-pw1umm1v3-chetans-projects-c8f1a790.vercel.app",
     "https://book-evntz-wjk3401u7-chetans-projects-c8f1a790.vercel.app",
 ]
 
+# Regex to allow ANY Vercel preview URL for this project
+VERCEL_PREVIEW_REGEX = r"https://book-evntz.*\.vercel\.app"
+
 CORS(
     app,
-    resources={r"/*": {"origins": ALLOWED_ORIGINS}},
+    resources={r"/*": {"origins": ALLOWED_ORIGINS + [VERCEL_PREVIEW_REGEX]}},
     supports_credentials=True,
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]

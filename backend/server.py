@@ -15,10 +15,13 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://turbo007.pythonanywhere.com",
     "https://book-evntz.vercel.app",
+    "https://book-evntz-pw1umm1v3-chetans-projects-c8f1a790.vercel.app",
     "https://book-evntz-wjk3401u7-chetans-projects-c8f1a790.vercel.app",
 ]
 
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
+VERCEL_PREVIEW_REGEX = r"https://book-evntz.*\.vercel\.app"
+
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ALLOWED_ORIGINS + [VERCEL_PREVIEW_REGEX]}})
 
 # ✅ Register blueprints with error handling
 try:
