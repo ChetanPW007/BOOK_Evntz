@@ -57,8 +57,8 @@ export default function Login() {
       showToast("error", "Enter Admin ID and Password");
       return;
     }
-    if (loginRole === "user" && (!phone || !password)) {
-      showToast("error", "Enter Phone Number and Password");
+    if (loginRole === "user" && (!usn || !password)) {
+      showToast("error", "Enter USN and Password");
       return;
     }
 
@@ -67,10 +67,7 @@ export default function Login() {
 
     try {
       // Build request body
-      const body =
-        loginRole === "admin"
-          ? { role: "admin", loginId: usn, password } // backend expects "loginId" for admin
-          : { role: "user", loginId: phone, password }; // backend expects "loginId" for user
+      const body = { role: loginRole, loginId: usn, password };
 
       const data = await apiPost("/users/login", body);
 
@@ -213,8 +210,8 @@ export default function Login() {
               />
             ) : (
               <input
-                name="phone"
-                placeholder="Phone Number"
+                name="usn"
+                placeholder="USN / Username"
                 onChange={handleChange}
                 disabled={loading}
               />

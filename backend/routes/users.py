@@ -35,8 +35,8 @@ def login():
         # Admin login by USN
         if role == "admin" and u_usn == login_id.lower():
             pass
-        # User login by Phone
-        elif role == "user" and u_phone == clean_phone(login_id):
+        # User login by USN (New) or Phone (Fallback)
+        elif role == "user" and (u_usn == login_id.lower() or u_phone == clean_phone(login_id)):
             pass
         else:
             continue

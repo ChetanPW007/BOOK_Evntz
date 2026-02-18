@@ -12,16 +12,14 @@ export default function Footer() {
   return (
     <footer className="footer-container">
       <div className="footer-left">
-        
         <img src={assets.logo} alt="GMU Logo" className="footer-logo" />
-        <p>GM University - Official Auditorium Booking System</p>
+        <p>GM University - Official Venue Registration</p>
       </div>
 
-      <p className="footer-copy">© 2025 GMU Auditorium Booking</p>
+      <p className="footer-copy">© 2025 GMU Venue Registration</p>
 
       <div className="footer-right">
-        <p>support@gmu.ac.in</p>
-        <p>+91 9876543210</p>
+        <p>info@gmu.ac.in</p>
       </div>
     </footer>
   );

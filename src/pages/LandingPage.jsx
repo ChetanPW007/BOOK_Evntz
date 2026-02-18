@@ -19,18 +19,10 @@ export default function LandingPage() {
         </div>
 
         <h1 className="title fade-up">
-          Welcome to GM University Auditorium Booking
+          Welcome to GM University Venue Registration
         </h1>
 
-        <div className="about-card fade-up">
-          <h3>ABOUT GM UNIVERSITY</h3>
-          <p>
-            GM University: Innovating Minds. Your exclusive portal to book the
-            Premier Venue for academic events, conferences, and cultural shows.
-          </p>
-        </div>
-
-        <button className="btn-gmu fade-up" onClick={() => navigate("/login")}>
+        <button className="btn-gmu fade-up" onClick={() => navigate("/register")}>
           LET'S GO
         </button>
 

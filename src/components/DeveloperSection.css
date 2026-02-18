@@ -263,35 +263,53 @@
 
     /* Smaller mobile devices */
     .developer-section {
-        padding: 30px 10px 20px;
+        padding: 20px 10px 15px;
+        margin-top: 10px;
     }
 
     .dev-heading {
-        font-size: 1.4rem;
-        margin-bottom: 25px;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
     }
 
     .dev-card {
         width: 100%;
-        max-width: 260px;
-        /* Keep it from being too wide */
-        height: 350px;
+        max-width: 220px;
+        /* Reduced from 260px */
+        height: 300px;
+        /* Reduced from 350px */
     }
 
     .dev-card-front,
     .dev-card-back {
-        padding: 20px;
+        padding: 15px;
+    }
+
+    .dev-image-wrapper {
+        width: 100px;
+        /* Reduced from 130px */
+        height: 100px;
+        /* Reduced from 130px */
+        margin-bottom: 15px;
     }
 
     .dev-name {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .dev-details {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .dev-college {
+        font-size: 0.75rem;
     }
 
     .connect-text {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .linkedin-btn {
+        padding: 10px;
     }
 }
