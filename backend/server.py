@@ -10,7 +10,15 @@ from backend.routes.events import event_blueprint
 from backend.routes.attendance import attendance_bp
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://turbo007.pythonanywhere.com",
+    "https://book-evntz.vercel.app",
+    "https://book-evntz-wjk3401u7-chetans-projects-c8f1a790.vercel.app",
+]
+
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
 # ✅ Register blueprints
 app.register_blueprint(user_blueprint, url_prefix="/api/users")
