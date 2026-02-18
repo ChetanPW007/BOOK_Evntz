@@ -29,17 +29,25 @@ def login():
         s = str(val).split('.')[0].strip()
         return s
 
+    print(f"DEBUG: Trying to match loginId='{login_id}' (cleaned phone='{clean_phone(login_id)}') role='{role}'")
     for u in users:
         u_usn = str(u.get("USN", "")).strip().lower()
         u_phone = clean_phone(u.get("Phone", ""))
+        u_name = str(u.get("Name", "")).strip().lower()
         u_role = str(u.get("Role", "user")).lower()
         u_pass = str(u.get("Password", "")).strip()
+
+        print(f"  Checking: USN='{u_usn}' Phone='{u_phone}' Name='{u_name}' Role='{u_role}'")
 
         # Admin login by USN
         if role == "admin" and u_usn == login_id.lower():
             pass
-        # User login by USN (New) or Phone (Fallback)
-        elif role == "user" and (u_usn == login_id.lower() or u_phone == clean_phone(login_id)):
+        # User login by USN, Phone, or Name
+        elif role == "user" and (
+            u_usn == login_id.lower() or
+            u_phone == clean_phone(login_id) or
+            u_name == login_id.lower()
+        ):
             pass
         else:
             continue
