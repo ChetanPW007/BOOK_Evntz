@@ -280,6 +280,36 @@ export default function EventDetails() {
     }
   }, [eventId]);
 
+  // Realtime feedback polling — refresh feedback status every 15s
+  useEffect(() => {
+    if (!eventId) return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await apiGet("/events");
+        if (res?.data) {
+          const arr = Array.isArray(res.data) ? res.data : [];
+          const found = arr.find(
+            (e) => String(e.ID || e.id) === String(eventId)
+          );
+          if (found) {
+            setEvent((prev) =>
+              prev
+                ? {
+                  ...prev,
+                  feedbackEnabled: String(found.FeedbackEnabled || "false"),
+                  feedbackFormLink: found.FeedbackFormLink || prev.feedbackFormLink,
+                }
+                : prev
+            );
+          }
+        }
+      } catch (e) {
+        /* silent — polling failure should not break UI */
+      }
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [eventId]);
+
 
   /* ------------------------------ LOGIC ------------------------------ */
 

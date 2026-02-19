@@ -188,6 +188,39 @@ export default function History() {
     };
   }, [currentUser?.usn, backendRoot]);
 
+  // Realtime feedback polling — refresh feedback status every 15s
+  useEffect(() => {
+    if (!currentUser?.usn || bookings.length === 0) return;
+    const interval = setInterval(async () => {
+      try {
+        const usn = encodeURIComponent(String(currentUser.usn).trim());
+        const res = await fetch(`${backendRoot}/bookings/user/${usn}`);
+        const data = await res.json();
+        if (data?.data && Array.isArray(data.data)) {
+          setBookings((prev) =>
+            prev.map((b) => {
+              const match = data.data.find(
+                (d) =>
+                  String(d.BookingID || d.bookingId) === String(b.bookingId)
+              );
+              if (match) {
+                return {
+                  ...b,
+                  feedbackEnabled: String(match.FeedbackEnabled || "false"),
+                  feedbackFormLink: match.FeedbackFormLink || b.feedbackFormLink,
+                };
+              }
+              return b;
+            })
+          );
+        }
+      } catch (e) {
+        /* silent */
+      }
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [currentUser?.usn, backendRoot, bookings.length]);
+
   // ------------------ SORT BOOKINGS ------------------
   const sortedBookings = useMemo(() => {
     return [...bookings].sort((a, b) => {
