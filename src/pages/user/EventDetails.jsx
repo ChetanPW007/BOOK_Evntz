@@ -260,6 +260,8 @@ export default function EventDetails() {
           speakers: hydratedSpeakers,
           coordinators: hydratedCoords,
           schedules: parsedSchedules, // Use dynamic schedules
+          feedbackFormLink: foundEvent.FeedbackFormLink || "",
+          feedbackEnabled: String(foundEvent.FeedbackEnabled || "false"),
         });
 
         setLoadingEvent(false);
@@ -342,7 +344,11 @@ export default function EventDetails() {
             <h1>{event.name}</h1>
 
             <div className="event-meta">
-              {event.auditorium} • {event.capacity} seats
+              {event.eventType === "Venue" ? (
+                <>{`📍 ${event.auditorium}`}</>
+              ) : (
+                <>{event.auditorium} • {event.capacity} seats</>
+              )}
             </div>
 
             <button
@@ -439,10 +445,30 @@ export default function EventDetails() {
       <div className="section-container">
         <h2 className="section-heading">Venue</h2>
         <div className="venue-info">
-          <div className="venue-name">🏛️ {event.auditorium}</div>
-          <div className="venue-capacity">Capacity: {event.capacity} seats</div>
+          <div className="venue-name">{event.eventType === "Venue" ? "📍" : "🏛️"} {event.auditorium}</div>
+          {event.eventType !== "Venue" && (
+            <div className="venue-capacity">Capacity: {event.capacity} seats</div>
+          )}
         </div>
       </div>
+
+      {/* ------------------------------ Feedback Link ------------------------------ */}
+      {event.feedbackEnabled === "true" && event.feedbackFormLink && (
+        <div className="section-container feedback-section">
+          <h2 className="section-heading">📝 Event Feedback</h2>
+          <p style={{ color: '#aaa', marginBottom: '15px', fontSize: '0.95rem' }}>
+            Your feedback helps us improve! Share your experience by filling out the quick form below.
+          </p>
+          <a
+            href={event.feedbackFormLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="feedback-link-btn"
+          >
+            ✨ Share Your Feedback →
+          </a>
+        </div>
+      )}
 
       {/* ------------------------------ Booking CTA ------------------------------ */}
       <div className="booking-footer">

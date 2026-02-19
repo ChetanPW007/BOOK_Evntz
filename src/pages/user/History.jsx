@@ -172,6 +172,8 @@ export default function History() {
           eventDate,
           auditorium, // Include auditorium
           usn: usnVal,
+          feedbackFormLink: b.FeedbackFormLink || "",
+          feedbackEnabled: String(b.FeedbackEnabled || "false"),
         };
       });
 
@@ -349,6 +351,18 @@ export default function History() {
                         PDF
                       </button>
                     </div>
+
+                    {b.feedbackEnabled === "true" && b.feedbackFormLink && (
+                      <a
+                        href={b.feedbackFormLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="feedback-btn"
+                        onClick={(ev) => ev.stopPropagation()}
+                      >
+                        📝 Feedback
+                      </a>
+                    )}
                   </div>
                 </div>
               );

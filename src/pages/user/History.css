@@ -279,3 +279,26 @@
     justify-content: center;
   }
 }
+
+/* === Feedback Button === */
+.feedback-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.feedback-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(46, 204, 113, 0.45);
+  background: linear-gradient(135deg, #27ae60, #219653);
+}

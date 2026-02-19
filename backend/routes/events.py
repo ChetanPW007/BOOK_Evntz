@@ -44,7 +44,10 @@ def add_event():
         "Schedules": data.get("Schedules", ""), # JSON string or already list? Ideally stored as JSON string in sheet
         "Duration": data.get("Duration", ""),
         "PublishAt": data.get("PublishAt", ""),
-        "EventType": data.get("EventType", "Auditorium") # New field
+        "EventType": data.get("EventType", "Auditorium"), # New field
+        "FeedbackFormLink": data.get("FeedbackFormLink", ""),
+        "FeedbackSheetLink": data.get("FeedbackSheetLink", ""),
+        "FeedbackEnabled": data.get("FeedbackEnabled", "false")
     }
 
     # Ensure Schedules is stored as string if it came as object
@@ -239,7 +242,8 @@ def update_event(event_id):
         "Name", "Auditorium", "Date", "Time", "Speakers", "Coordinators",
         "College", "Capacity", "Poster", "About", "Visibility", "SeatLayout",
         "College", "Capacity", "Poster", "About", "Visibility", "SeatLayout",
-        "Schedules", "Duration", "PublishAt", "Featured", "EventType"
+        "Schedules", "Duration", "PublishAt", "Featured", "EventType",
+        "FeedbackFormLink", "FeedbackSheetLink", "FeedbackEnabled"
     ]
 
     for key in allowed_keys:
@@ -378,6 +382,21 @@ def set_visibility(event_id):
     flag = data.get("visibility", "visible")
 
     ok = gs.toggle_event_visibility(event_id, flag)
+    if ok:
+        return jsonify({"status": "success"}), 200
+
+    return jsonify({"status": "failed", "message": "event not found"}), 404
+
+
+# ---------------------------
+# TOGGLE FEEDBACK LINK
+# ---------------------------
+@event_blueprint.route("/feedback/<event_id>", methods=["PUT"])
+def toggle_feedback(event_id):
+    data = request.json or {}
+    enabled = data.get("FeedbackEnabled", "false")
+
+    ok = gs.update_event(event_id, {"FeedbackEnabled": enabled})
     if ok:
         return jsonify({"status": "success"}), 200
 

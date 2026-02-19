@@ -254,6 +254,8 @@ def bookings_for_user(usn):
                         "eventImage": found.get("Poster"),
                         "show": found.get("Time"), # fallback
                         "Date": found.get("Date"), # useful for history display
+                        "FeedbackFormLink": found.get("FeedbackFormLink", ""),
+                        "FeedbackEnabled": str(found.get("FeedbackEnabled", "false")),
                     }
 
                 # Enrich with User Details using Map (though we likely know the user)

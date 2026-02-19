@@ -136,7 +136,10 @@ function EventForm({ initial, onClose, onSaved }) {
     // New Fields
     Schedules: [], // Array of {Date, Time}
     Duration: "", // e.g. "2h 30m"
-    PublishAt: "" // Date-time string or empty
+    PublishAt: "", // Date-time string or empty
+    FeedbackFormLink: "",
+    FeedbackSheetLink: "",
+    FeedbackEnabled: "false"
   });
 
   // Schedule Inputs
@@ -151,6 +154,9 @@ function EventForm({ initial, onClose, onSaved }) {
   const [coordinators, setCoordinators] = useState([]);
   const [auditoriums, setAuditoriums] = useState([]); // Array of selected auditoriums
   const [loading, setLoading] = useState(false);
+  const [showAudiModal, setShowAudiModal] = useState(false);
+  const [validating, setValidating] = useState(false);
+  const [venueNameOptions, setVenueNameOptions] = useState([]); // Autocomplete options for venue names
 
   useEffect(() => {
     async function loadMeta() {
@@ -172,7 +178,6 @@ function EventForm({ initial, onClose, onSaved }) {
       const c = await apiGet("/events/coordinators");
       if (c && c.data) {
         setCoordData(c.data); // Store full objects
-        // extract string names if they are objects, or just strings
         const names = c.data.map(i => (typeof i === 'string' ? i : i.Name));
         setCoordOpts(names);
       }
@@ -182,6 +187,24 @@ function EventForm({ initial, onClose, onSaved }) {
         setSpeakerData(s.data); // Store full objects
         const names = s.data.map(i => (typeof i === 'string' ? i : i.Name));
         setSpeakerOpts(names);
+      }
+
+      // Build venue name autocomplete from existing events + auditoriums
+      try {
+        const evRes = await apiGet("/events/");
+        const allEv = evRes.events || [];
+        const existingNames = new Set();
+        allEv.forEach(ev => {
+          if (ev.EventType === 'Venue' && ev.Auditorium) {
+            ev.Auditorium.split(',').forEach(n => {
+              const trimmed = n.trim();
+              if (trimmed) existingNames.add(trimmed);
+            });
+          }
+        });
+        setVenueNameOptions([...existingNames].sort());
+      } catch (e) {
+        console.warn('Failed to load venue name options', e);
       }
     }
     loadMeta();
@@ -203,7 +226,10 @@ function EventForm({ initial, onClose, onSaved }) {
         ...prev,
         Schedules: initSchedules,
         Duration: initial.Duration || "",
-        PublishAt: initial.PublishAt || ""
+        PublishAt: initial.PublishAt || "",
+        FeedbackFormLink: initial.FeedbackFormLink || "",
+        FeedbackSheetLink: initial.FeedbackSheetLink || "",
+        FeedbackEnabled: initial.FeedbackEnabled || "false"
       }));
 
       // Parse coordinators if JSON, else wrap string
@@ -535,13 +561,24 @@ function EventForm({ initial, onClose, onSaved }) {
               </div>
 
               {form.EventType === "Venue" ? (
-                <input
-                  className="admin-input"
-                  placeholder="e.g. Open Ground, Main Seminar Hall"
-                  value={form.Auditorium}
-                  onChange={(e) => setForm({ ...form, Auditorium: e.target.value })}
-                  style={{ padding: '12px', fontSize: '16px', borderColor: '#555' }}
-                />
+                <>
+                  <input
+                    className="admin-input"
+                    list="venue-name-suggestions"
+                    placeholder="e.g. Open Ground, Main Seminar Hall"
+                    value={form.Auditorium}
+                    onChange={(e) => setForm({ ...form, Auditorium: e.target.value })}
+                    style={{ padding: '12px', fontSize: '16px', borderColor: '#555' }}
+                  />
+                  <datalist id="venue-name-suggestions">
+                    {venueNameOptions.map((v, i) => <option key={i} value={v} />)}
+                    {/* Also include auditorium names as options */}
+                    {auditoriumList.filter(a => !venueNameOptions.includes(a.Name)).map((a, i) => <option key={`a-${i}`} value={a.Name} />)}
+                  </datalist>
+                  {form.Auditorium && !venueNameOptions.includes(form.Auditorium) && !auditoriumList.some(a => a.Name === form.Auditorium) && (
+                    <small style={{ color: '#2ecc71', marginTop: '4px', display: 'block' }}>✨ New venue name — will be available for future events</small>
+                  )}
+                </>
               ) : (
                 <div style={{ background: '#111', padding: '10px', borderRadius: '8px', border: '1px solid #333' }}>
                   {/* Selected Auditoriums Chips */}
@@ -649,40 +686,42 @@ function EventForm({ initial, onClose, onSaved }) {
             <input type="number" className="admin-input" value={form.Capacity} onChange={e => setForm({ ...form, Capacity: e.target.value })} />
           </div>
 
-          {/* SEAT LAYOUT EDITOR */}
-          <div className="admin-form-group" style={{ marginTop: 15, background: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <label style={{ margin: 0 }}>Seating Arrangement</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '12px', color: '#888' }}>
-                  {form.SeatLayout ? "Custom Layout Active" : "Using Default Capacity Logic"}
-                </span>
-                <Toggle
-                  checked={!!form.SeatLayout}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      // Init new layout if empty
-                      // Try to find auditorium default again or use empty
-                      const match = auditoriumList.find(a => a.Name === form.Auditorium);
-                      setForm({ ...form, SeatLayout: (match && match.SeatLayout) ? match.SeatLayout : JSON.stringify({ rows: 10, cols: 15, grid: [] }) });
-                    } else {
-                      // Clear layout
-                      setForm({ ...form, SeatLayout: "" });
-                    }
-                  }}
-                />
+          {/* SEAT LAYOUT EDITOR — Hidden for Venue events (no seat selection needed) */}
+          {form.EventType !== "Venue" && (
+            <div className="admin-form-group" style={{ marginTop: 15, background: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <label style={{ margin: 0 }}>Seating Arrangement</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '12px', color: '#888' }}>
+                    {form.SeatLayout ? "Custom Layout Active" : "Using Default Capacity Logic"}
+                  </span>
+                  <Toggle
+                    checked={!!form.SeatLayout}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // Init new layout if empty
+                        // Try to find auditorium default again or use empty
+                        const match = auditoriumList.find(a => a.Name === form.Auditorium);
+                        setForm({ ...form, SeatLayout: (match && match.SeatLayout) ? match.SeatLayout : JSON.stringify({ rows: 10, cols: 15, grid: [] }) });
+                      } else {
+                        // Clear layout
+                        setForm({ ...form, SeatLayout: "" });
+                      }
+                    }}
+                  />
+                </div>
               </div>
-            </div>
 
-            {form.SeatLayout && (
-              <div style={{ border: '1px solid #333', borderRadius: 8, padding: 10, background: '#111' }}>
-                <SeatLayoutEditor
-                  initialLayout={form.SeatLayout}
-                  onChange={handleLayoutChange}
-                />
-              </div>
-            )}
-          </div>
+              {form.SeatLayout && (
+                <div style={{ border: '1px solid #333', borderRadius: 8, padding: 10, background: '#111' }}>
+                  <SeatLayoutEditor
+                    initialLayout={form.SeatLayout}
+                    onChange={handleLayoutChange}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* POSTER */}
           <div className="admin-form-group">
@@ -879,6 +918,42 @@ function EventForm({ initial, onClose, onSaved }) {
               />
             </div>
 
+          </div>
+
+          {/* FEEDBACK LINK SECTION */}
+          <div style={{ background: '#1a1a1a', padding: '15px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #333' }}>
+            <h4 style={{ marginTop: 0, color: '#2ecc71', marginBottom: '12px' }}>📝 Feedback & Attendance</h4>
+
+            <div className="admin-form-group">
+              <label>Google Form Link <small style={{ fontWeight: 'normal', color: '#888' }}>(Feedback / Attendance form)</small></label>
+              <input
+                className="admin-input"
+                placeholder="https://docs.google.com/forms/d/e/..."
+                value={form.FeedbackFormLink}
+                onChange={e => setForm({ ...form, FeedbackFormLink: e.target.value })}
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label>Google Sheet Link <small style={{ fontWeight: 'normal', color: '#888' }}>(Responses sheet)</small></label>
+              <input
+                className="admin-input"
+                placeholder="https://docs.google.com/spreadsheets/d/..."
+                value={form.FeedbackSheetLink}
+                onChange={e => setForm({ ...form, FeedbackSheetLink: e.target.value })}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+              <span style={{ fontWeight: 'bold', fontSize: '14px', color: form.FeedbackEnabled === 'true' ? '#2ecc71' : '#888' }}>
+                {form.FeedbackEnabled === 'true' ? '🔓 Feedback Link Active' : '🔒 Feedback Link Locked'}
+              </span>
+              <Toggle
+                checked={form.FeedbackEnabled === "true"}
+                onChange={(e) => setForm({ ...form, FeedbackEnabled: e.target.checked ? "true" : "false" })}
+              />
+              <small style={{ color: '#666' }}>Enable when event is Live</small>
+            </div>
           </div>
 
         </div>
@@ -1143,6 +1218,28 @@ export default function AdminEvents() {
                   />
                 </div>
                 <button className="action-icon-btn delete" title="Delete" onClick={() => remove(id)}>🗑</button>
+                {/* Feedback Toggle */}
+                {ev.FeedbackFormLink && (
+                  <button
+                    className="action-icon-btn"
+                    title={ev.FeedbackEnabled === 'true' ? 'Disable Feedback Link' : 'Enable Feedback Link'}
+                    style={{
+                      color: ev.FeedbackEnabled === 'true' ? '#2ecc71' : '#888',
+                      fontSize: '16px'
+                    }}
+                    onClick={async () => {
+                      const newState = ev.FeedbackEnabled === 'true' ? 'false' : 'true';
+                      if (newState === 'true' && !isVisible) {
+                        alert('Event must be visible (Live) before enabling feedback.');
+                        return;
+                      }
+                      await apiPut(`/events/feedback/${id}`, { FeedbackEnabled: newState });
+                      await load();
+                    }}
+                  >
+                    {ev.FeedbackEnabled === 'true' ? '📝' : '📝'}
+                  </button>
+                )}
               </div>
             </div>
           );
