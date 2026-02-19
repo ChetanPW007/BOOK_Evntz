@@ -1,0 +1,150 @@
+.confirmation-page {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: transparent;
+    /* Inherits main layout gradient */
+}
+
+.confirmation-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.confirmation-card h1 {
+    margin-top: 0;
+    color: #fff;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.confirmation-card h2 {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.confirmation-card .subtitle {
+    color: #888;
+    margin-bottom: 25px;
+}
+
+.event-summary {
+    display: flex;
+    gap: 15px;
+    background: #111;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    margin-bottom: 20px;
+    border: 1px solid #222;
+}
+
+.summary-poster {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.summary-info h2 {
+    font-size: 1.2rem;
+    margin: 0 0 5px 0;
+    color: #fae38c;
+}
+
+.summary-loc,
+.summary-time {
+    margin: 2px 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.info-row:last-of-type {
+    border-bottom: none;
+    margin-bottom: 20px;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.full-width {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.btn.text {
+    background: none;
+    color: #888;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+/* Success State */
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    background: #2ecc71;
+    color: #000;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.details-box {
+    background: #111;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+    border: 1px solid #333;
+}
+
+.details-box p {
+    margin: 8px 0;
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+.details-box strong {
+    color: #fae38c;
+    width: 100px;
+    display: inline-block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

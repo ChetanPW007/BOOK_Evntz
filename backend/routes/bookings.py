@@ -83,7 +83,12 @@ def add_booking():
     # 2. Check if seat is already taken (if specific seat passed)
     # seats_str e.g. "A1" or "A1,A2"
     req_seats = [s.strip() for s in seats_str.split(",") if s.strip()]
-    if req_seats:
+    
+    # Check if this is a "Venue" booking (General Entry)
+    # If explicitly "General Entry", we skip specific seat checks
+    is_general_entry = any(s.lower() == "general entry" for s in req_seats)
+
+    if req_seats and not is_general_entry:
         for b in all_bookings:
             if str(b.get("EventID")) == str(event_id):
                 existing_seats = [s.strip() for s in str(b.get("Seats","")).split(",")]

@@ -29,6 +29,7 @@ import AuditoriumList from "./pages/user/AuditoriumList";
 import MyTickets from "./pages/user/MyTickets";
 import TicketPage from "./pages/user/TicketPage";
 import SeatBooking from "./pages/user/SeatBooking"; // Seat booking component
+import BookingConfirmation from "./pages/user/BookingConfirmation"; // Venue Confirmation
 
 // Admin Pages
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -104,6 +105,7 @@ function App() {
           <Route path="/event/:eventId/auditoriums" element={<AuditoriumList />} />
           <Route path="/event/:eventId" element={<EventDetails />} />
           <Route path="/event/:eventId/booking" element={<SeatBooking />} />
+          <Route path="/booking-confirmation" element={<BookingConfirmation />} />
 
           {/* USER TICKETS */}
           <Route path="/my-tickets" element={<MyTickets />} />

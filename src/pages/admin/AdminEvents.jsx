@@ -121,6 +121,7 @@ function EventForm({ initial, onClose, onSaved }) {
   const [form, setForm] = useState({
     ID: "",
     Name: "",
+    EventType: "Auditorium", // "Auditorium" or "Venue"
     Auditorium: "", // Legacy single auditorium (for backward compatibility)
     // Legacy Date/Time (will store first schedule for compat)
     Date: "",
@@ -409,7 +410,14 @@ function EventForm({ initial, onClose, onSaved }) {
 
   const submit = async () => {
     if (!form.Name) return alert("Event name is required");
-    if (auditoriums.length === 0) return alert("Select at least one auditorium");
+
+    // Validation based on Event Type
+    if (form.EventType === "Venue") {
+      if (!form.Auditorium) return alert("Please enter the Venue Name");
+    } else {
+      if (auditoriums.length === 0) return alert("Select at least one auditorium");
+    }
+
     if (form.Schedules.length === 0) return alert("Add at least one schedule (Date & Time)");
     if (conflicts.length > 0) return alert("Resolve scheduling conflicts before saving.");
 
@@ -477,65 +485,115 @@ function EventForm({ initial, onClose, onSaved }) {
                 placeholder="e.g. Annual Day"
               />
             </div>
+            {/* EVENT TYPE & LOCATION */}
+            <div className="admin-form-group" style={{ marginBottom: '20px', background: '#222', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
+              <label style={{ marginBottom: '10px', display: 'block', color: '#ccc' }}>Event Location Type</label>
+              <div style={{ display: 'flex', gap: '30px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '15px' }}>
+                  <input
+                    type="radio"
+                    name="EventType"
+                    value="Auditorium"
+                    checked={form.EventType !== "Venue"} // Default
+                    onChange={() => {
+                      setForm({ ...form, EventType: "Auditorium", Auditorium: "" });
+                      setAuditoriums([]); // Clear selection
+                    }}
+                    style={{ accentColor: '#fae38c', transform: 'scale(1.2)' }}
+                  />
+                  <span style={{ color: form.EventType !== "Venue" ? '#fae38c' : '#888' }}>Auditorium</span>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '15px' }}>
+                  <input
+                    type="radio"
+                    name="EventType"
+                    value="Venue"
+                    checked={form.EventType === "Venue"}
+                    onChange={() => {
+                      setForm({ ...form, EventType: "Venue", Auditorium: "" });
+                      setAuditoriums([]); // Clear
+                    }}
+                    style={{ accentColor: '#fae38c', transform: 'scale(1.2)' }}
+                  />
+                  <span style={{ color: form.EventType === "Venue" ? '#fae38c' : '#888' }}>Other Venue (Ground/Hall)</span>
+                </label>
+              </div>
+            </div>
+
             <div className="admin-form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label>Auditoriums</label>
-                <button type="button"
-                  className="admin-text-btn"
-                  onClick={() => setShowAudiModal(true)}
-                  style={{ fontSize: '0.8rem', color: 'var(--admin-accent)' }}>
-                  + Create New
-                </button>
+                <label>{form.EventType === "Venue" ? "Venue Name" : "Auditoriums"}</label>
+                {form.EventType !== "Venue" && (
+                  <button type="button"
+                    className="admin-text-btn"
+                    onClick={() => setShowAudiModal(true)}
+                    style={{ fontSize: '0.8rem', color: 'var(--admin-accent)' }}>
+                    + Create New
+                  </button>
+                )}
               </div>
 
-              {/* Selected Auditoriums Chips */}
-              {auditoriums.length > 0 && (
-                <div className="chip-container" style={{ marginBottom: '10px' }}>
-                  {auditoriums.map((audi, idx) => {
-                    const audiObj = auditoriumList.find(a => a.Name === audi);
-                    return (
-                      <div key={idx} className="chip">
-                        {audi} {audiObj && `(${audiObj.Capacity} seats)`}
-                        <button onClick={() => removeAuditoriumFromList(audi)}>×</button>
-                      </div>
-                    );
-                  })}
+              {form.EventType === "Venue" ? (
+                <input
+                  className="admin-input"
+                  placeholder="e.g. Open Ground, Main Seminar Hall"
+                  value={form.Auditorium}
+                  onChange={(e) => setForm({ ...form, Auditorium: e.target.value })}
+                  style={{ padding: '12px', fontSize: '16px', borderColor: '#555' }}
+                />
+              ) : (
+                <div style={{ background: '#111', padding: '10px', borderRadius: '8px', border: '1px solid #333' }}>
+                  {/* Selected Auditoriums Chips */}
+                  {auditoriums.length > 0 && (
+                    <div className="chip-container" style={{ marginBottom: '10px' }}>
+                      {auditoriums.map((audi, idx) => {
+                        const audiObj = auditoriumList.find(a => a.Name === audi);
+                        return (
+                          <div key={idx} className="chip">
+                            {audi} {audiObj && `(${audiObj.Capacity} seats)`}
+                            <button onClick={() => removeAuditoriumFromList(audi)}>×</button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Auditorium Selector */}
+                  <select
+                    className="admin-input"
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        addAuditoriumToList(e.target.value);
+                        // Also set as primary auditorium (backward compat)
+                        if (auditoriums.length === 0) {
+                          const matched = auditoriumList.find(a => a.Name === e.target.value);
+                          if (matched) {
+                            setForm(prev => ({
+                              ...prev,
+                              Auditorium: e.target.value,
+                              Capacity: matched.Capacity,
+                              SeatLayout: matched.SeatLayout,
+                            }));
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <option value="">-- Add Auditorium --</option>
+                    {auditoriumList
+                      .filter(a => !auditoriums.includes(a.Name))
+                      .map((a, i) => (
+                        <option key={i} value={a.Name}>
+                          {a.Name} ({a.Capacity} Seats)
+                        </option>
+                      ))}
+                  </select>
+                  {auditoriumList.length === 0 && <small style={{ color: 'orange' }}>No auditoriums found. Please add one first.</small>}
+                  {auditoriums.length === 0 && <small style={{ color: '#888', display: 'block', marginTop: '5px' }}>Select at least one auditorium</small>}
                 </div>
               )}
-
-              {/* Auditorium Selector */}
-              <select
-                className="admin-input"
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) {
-                    addAuditoriumToList(e.target.value);
-                    // Also set as primary auditorium (backward compat)
-                    if (auditoriums.length === 0) {
-                      const matched = auditoriumList.find(a => a.Name === e.target.value);
-                      if (matched) {
-                        setForm(prev => ({
-                          ...prev,
-                          Auditorium: e.target.value,
-                          Capacity: matched.Capacity,
-                          SeatLayout: matched.SeatLayout,
-                        }));
-                      }
-                    }
-                  }
-                }}
-              >
-                <option value="">-- Add Auditorium --</option>
-                {auditoriumList
-                  .filter(a => !auditoriums.includes(a.Name))
-                  .map((a, i) => (
-                    <option key={i} value={a.Name}>
-                      {a.Name} ({a.Capacity} Seats)
-                    </option>
-                  ))}
-              </select>
-              {auditoriumList.length === 0 && <small style={{ color: 'orange' }}>No auditoriums found. Please add one first.</small>}
-              {auditoriums.length === 0 && <small style={{ color: '#888', display: 'block', marginTop: '5px' }}>Select at least one auditorium</small>}
             </div>
           </div>
 

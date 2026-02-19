@@ -256,6 +256,7 @@ export default function EventDetails() {
           description: foundEvent.About || foundEvent.Description || foundEvent.description || "",
           poster: foundEvent.Poster || foundEvent.poster || "/assets/default.jpg",
           capacity: foundEvent.Capacity || foundEvent.capacity || "—",
+          eventType: foundEvent.EventType || "Auditorium", // Add EventType
           speakers: hydratedSpeakers,
           coordinators: hydratedCoords,
           schedules: parsedSchedules, // Use dynamic schedules
@@ -468,18 +469,27 @@ export default function EventDetails() {
           className="btn primary book-now-btn"
           disabled={!selectedSchedule}
           onClick={() => {
-            navigate(`/event/${event.id}/booking`, {
-              state: {
-                event: {
-                  ...event,
-                  Auditorium: event.auditorium
+            if (event.eventType === "Venue") {
+              // Direct Booking Confirmation for Venue
+              navigate(`/booking-confirmation`, {
+                state: {
+                  event: { ...event, Auditorium: event.auditorium },
+                  schedule: selectedSchedule,
+                  seats: ["General Entry"] // Dummy seat
+                }
+              });
+            } else {
+              // Seat Selection for Auditorium
+              navigate(`/event/${event.id}/booking`, {
+                state: {
+                  event: { ...event, Auditorium: event.auditorium },
+                  schedule: selectedSchedule
                 },
-                schedule: selectedSchedule
-              },
-            });
+              });
+            }
           }}
         >
-          Book Now
+          {event.eventType === "Venue" ? "Book Entry" : "Select Seats"}
         </button>
       </div>
     </div>

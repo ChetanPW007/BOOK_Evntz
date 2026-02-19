@@ -43,7 +43,8 @@ def add_event():
         "SeatLayout": data.get("SeatLayout", ""),
         "Schedules": data.get("Schedules", ""), # JSON string or already list? Ideally stored as JSON string in sheet
         "Duration": data.get("Duration", ""),
-        "PublishAt": data.get("PublishAt", "") 
+        "PublishAt": data.get("PublishAt", ""),
+        "EventType": data.get("EventType", "Auditorium") # New field
     }
 
     # Ensure Schedules is stored as string if it came as object
@@ -237,7 +238,8 @@ def update_event(event_id):
     allowed_keys = [
         "Name", "Auditorium", "Date", "Time", "Speakers", "Coordinators",
         "College", "Capacity", "Poster", "About", "Visibility", "SeatLayout",
-        "Schedules", "Duration", "PublishAt", "Featured"
+        "College", "Capacity", "Poster", "About", "Visibility", "SeatLayout",
+        "Schedules", "Duration", "PublishAt", "Featured", "EventType"
     ]
 
     for key in allowed_keys:
