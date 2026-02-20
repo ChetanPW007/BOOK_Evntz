@@ -16,6 +16,7 @@ app = Flask(__name__)
 # CORS Configuration
 # ---------------------------
 # Allow localhost, production, and ALL Vercel preview deployments
+ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://turbo007.pythonanywhere.com",
