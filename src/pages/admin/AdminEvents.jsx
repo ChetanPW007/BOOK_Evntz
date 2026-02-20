@@ -549,62 +549,44 @@ function EventForm({ initial, onClose, onSaved }) {
 
             <div className="admin-form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label>{form.EventType === "Venue" ? "Venue Name" : "Auditoriums"}</label>
-                {form.EventType !== "Venue" && (
-                  <button type="button"
-                    className="admin-text-btn"
-                    onClick={() => setShowAudiModal(true)}
-                    style={{ fontSize: '0.8rem', color: 'var(--admin-accent)' }}>
-                    + Create New
-                  </button>
-                )}
+                <label>{form.EventType === "Venue" ? "Venue / Location" : "Auditoriums"}</label>
+                {/* Always show Create New, useful for adding new Auditoriums/Venues on the fly */}
+                <button type="button"
+                  className="admin-text-btn"
+                  onClick={() => setShowAudiModal(true)}
+                  style={{ fontSize: '0.8rem', color: 'var(--admin-accent)' }}>
+                  + Create New
+                </button>
               </div>
 
-              {form.EventType === "Venue" ? (
-                <>
-                  <input
-                    className="admin-input"
-                    list="venue-name-suggestions"
-                    placeholder="e.g. Open Ground, Main Seminar Hall"
-                    value={form.Auditorium}
-                    onChange={(e) => setForm({ ...form, Auditorium: e.target.value })}
-                    style={{ padding: '12px', fontSize: '16px', borderColor: '#555' }}
-                  />
-                  <datalist id="venue-name-suggestions">
-                    {venueNameOptions.map((v, i) => <option key={i} value={v} />)}
-                    {/* Also include auditorium names as options */}
-                    {auditoriumList.filter(a => !venueNameOptions.includes(a.Name)).map((a, i) => <option key={`a-${i}`} value={a.Name} />)}
-                  </datalist>
-                  {form.Auditorium && !venueNameOptions.includes(form.Auditorium) && !auditoriumList.some(a => a.Name === form.Auditorium) && (
-                    <small style={{ color: '#2ecc71', marginTop: '4px', display: 'block' }}>✨ New venue name — will be available for future events</small>
-                  )}
-                </>
-              ) : (
-                <div style={{ background: '#111', padding: '10px', borderRadius: '8px', border: '1px solid #333' }}>
-                  {/* Selected Auditoriums Chips */}
-                  {auditoriums.length > 0 && (
-                    <div className="chip-container" style={{ marginBottom: '10px' }}>
-                      {auditoriums.map((audi, idx) => {
-                        const audiObj = auditoriumList.find(a => a.Name === audi);
-                        return (
-                          <div key={idx} className="chip">
-                            {audi} {audiObj && `(${audiObj.Capacity} seats)`}
-                            <button onClick={() => removeAuditoriumFromList(audi)}>×</button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+              <div style={{ background: '#111', padding: '10px', borderRadius: '8px', border: '1px solid #333' }}>
+                {/* Selected Locations Chips */}
+                {auditoriums.length > 0 && (
+                  <div className="chip-container" style={{ marginBottom: '10px' }}>
+                    {auditoriums.map((audi, idx) => {
+                      const audiObj = auditoriumList.find(a => a.Name === audi);
+                      return (
+                        <div key={idx} className="chip">
+                          {audi} {audiObj && `(${audiObj.Capacity} seats)`}
+                          <button onClick={() => removeAuditoriumFromList(audi)}>×</button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
-                  {/* Auditorium Selector */}
+                {/* Unified Selector */}
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  {/* Dropdown for Existing Auditoriums */}
                   <select
                     className="admin-input"
                     value=""
+                    style={{ flex: 1 }}
                     onChange={(e) => {
                       if (e.target.value) {
                         addAuditoriumToList(e.target.value);
-                        // Also set as primary auditorium (backward compat)
-                        if (auditoriums.length === 0) {
+                        // For Auditorium type, auto-set layout if first selection
+                        if (form.EventType === "Auditorium" && auditoriums.length === 0) {
                           const matched = auditoriumList.find(a => a.Name === e.target.value);
                           if (matched) {
                             setForm(prev => ({
@@ -615,22 +597,56 @@ function EventForm({ initial, onClose, onSaved }) {
                             }));
                           }
                         }
+                        // For Venue type, just add the name (no layout)
+                        if (form.EventType === "Venue" && auditoriums.length === 0) {
+                          setForm(prev => ({ ...prev, Auditorium: e.target.value }));
+                        }
                       }
                     }}
                   >
-                    <option value="">-- Add Auditorium --</option>
+                    <option value="">-- Select Existing Auditorium/Venue --</option>
                     {auditoriumList
                       .filter(a => !auditoriums.includes(a.Name))
                       .map((a, i) => (
                         <option key={i} value={a.Name}>
-                          {a.Name} ({a.Capacity} Seats)
+                          {a.Name} {form.EventType === "Auditorium" ? `(${a.Capacity} Seats)` : ""}
                         </option>
                       ))}
                   </select>
-                  {auditoriumList.length === 0 && <small style={{ color: 'orange' }}>No auditoriums found. Please add one first.</small>}
-                  {auditoriums.length === 0 && <small style={{ color: '#888', display: 'block', marginTop: '5px' }}>Select at least one auditorium</small>}
                 </div>
-              )}
+
+                {/* Manual Entry for Venues (Text Input) */}
+                {form.EventType === "Venue" && (
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center', borderTop: '1px dashed #333', paddingTop: '10px' }}>
+                    <input
+                      className="admin-input"
+                      placeholder="Or type custom venue name..."
+                      id="custom-venue-input"
+                      list="venue-name-suggestions"
+                    />
+                    <datalist id="venue-name-suggestions">
+                      {venueNameOptions.map((v, i) => <option key={i} value={v} />)}
+                    </datalist>
+                    <button
+                      type="button"
+                      className="admin-btn"
+                      style={{ padding: '8px 12px', fontSize: '13px' }}
+                      onClick={() => {
+                        const val = document.getElementById("custom-venue-input").value;
+                        if (val.trim()) {
+                          addAuditoriumToList(val.trim());
+                          if (auditoriums.length === 0) setForm(prev => ({ ...prev, Auditorium: val.trim() }));
+                          document.getElementById("custom-venue-input").value = "";
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
+
+                {auditoriums.length === 0 && <small style={{ color: '#888', display: 'block', marginTop: '5px' }}>Select at least one location</small>}
+              </div>
             </div>
           </div>
 

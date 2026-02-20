@@ -140,6 +140,39 @@ def add_booking():
         "Schedule": data.get("Schedule") or data.get("schedule", "")
     }
     booking_id = gs.add_booking(booking)
+    
+    # Send Email Notification
+    try:
+        from backend.services.email_service import EmailService
+        
+        # Fetch user email (assuming USN is the key or we have a user lookup)
+        # We need to fetch user details from Sheets to get the email
+        users = gs.get_users()
+        user = next((u for u in users if str(u.get("USN")).lower() == str(usn).lower()), None)
+        
+        if user and user.get("Email"):
+            # Get Event Details for the email
+            event_name = "Event"
+            events = gs.get_events()
+            ev = next((e for e in events if str(e.get("ID")) == str(event_id)), None)
+            if ev:
+                event_name = ev.get("Name")
+
+            EmailService.send_booking_confirmation(
+                user_email=user.get("Email"),
+                user_name=user.get("Name", "Student"),
+                booking_details={
+                    "event_name": event_name,
+                    "venue": booking.get("Auditorium"),
+                    "date": booking.get("Schedule", "").split(' ', 1)[0] if booking.get("Schedule") else "TBA",
+                    "time": booking.get("Schedule", "").split(' ', 1)[1] if booking.get("Schedule") and ' ' in booking.get("Schedule") else "",
+                    "booking_id": booking.get("BookingID"),
+                    "seats": booking.get("Seats")
+                }
+            )
+    except Exception as e:
+        print(f"Email sending failed (non-blocking): {e}")
+
     # Correctly return the ID stored in the dict, not the boolean result of add_booking
     return jsonify({"status":"success","bookingId": booking["BookingID"]}), 201
 

@@ -1,6 +1,8 @@
-# backend/config.py
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv() # Load .env file
 
 # Path to your Google Service Account JSON file (relative to project root)
 # For local development
@@ -9,6 +11,10 @@ SERVICE_ACCOUNT_FILE = "backend/config/credentials.json"
 # For production (Render.com) - credentials from environment variable
 # Set GOOGLE_SHEETS_CREDS environment variable with the JSON content
 GOOGLE_SHEETS_CREDS = os.getenv("GOOGLE_SHEETS_CREDS")
+
+# Email Credentials
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # Helper function to get credentials
 def get_google_credentials():
