@@ -5,7 +5,7 @@
             "headers": [
                 {
                     "key": "Content-Security-Policy",
-                    "value": "default-src 'self' https://turbo007.pythonanywhere.com https://book-evntz-8lc06te2n-chetans-projects-c8f1a790.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://turbo007.pythonanywhere.com https://book-evntz-8lc06te2n-chetans-projects-c8f1a790.vercel.app;"
+                    "value": "default-src 'self' https://turbo007.pythonanywhere.com https://*.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://turbo007.pythonanywhere.com https://*.vercel.app;"
                 },
                 {
                     "key": "Access-Control-Allow-Origin",
