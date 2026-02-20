@@ -103,6 +103,7 @@ export default function EventCard({ event, index }) {
           }}
         />
         {category && <span className="event-badge">{category}</span>}
+        {event.booked && <span className="event-booked-badge">✅ Ticket Booked</span>}
       </div>
 
       {/* ---------------------- Body ---------------------- */}

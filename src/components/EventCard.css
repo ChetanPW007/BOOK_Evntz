@@ -102,6 +102,23 @@
   z-index: 2;
 }
 
+.event-booked-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(46, 204, 113, 0.95);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+}
+
 /* Dark gradient overlay on image bottom */
 .event-media::after {
   content: "";

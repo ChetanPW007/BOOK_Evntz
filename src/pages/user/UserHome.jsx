@@ -134,6 +134,22 @@ export default function UserHome() {
 
           setAuditoriums(activeAuditoriums);
         }
+
+        // --- NEW: Fetch User Bookings to show "Already Booked" status ---
+        const userStored = localStorage.getItem("currentUser");
+        if (userStored) {
+          const u = JSON.parse(userStored);
+          const bookingsRes = await apiGet(`/bookings/user/${u.usn || u.USN}`);
+          if (bookingsRes.status === "success" && Array.isArray(bookingsRes.data)) {
+            const bookedIds = new Set(bookingsRes.data.map(b => String(b.EventID || b.eventId)));
+
+            // Re-map events with booked status
+            setEvents(prev => prev.map(ev => ({
+              ...ev,
+              booked: bookedIds.has(String(ev.id))
+            })));
+          }
+        }
       } catch (err) {
         console.warn("API failed → using cache");
 

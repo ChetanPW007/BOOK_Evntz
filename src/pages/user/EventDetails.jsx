@@ -246,7 +246,18 @@ export default function EventDetails() {
 
         console.log("✅ Parsed Schedules:", parsedSchedules);
 
-        // STEP 6: Set normalized event data
+        // STEP 6: Check if user already booked this event
+        let isBooked = false;
+        const userStored = localStorage.getItem("currentUser");
+        if (userStored) {
+          const u = JSON.parse(userStored);
+          const bookingsRes = await apiGet(`/bookings/user/${u.usn || u.USN}`);
+          if (bookingsRes.status === "success" && Array.isArray(bookingsRes.data)) {
+            isBooked = bookingsRes.data.some(b => String(b.EventID || b.eventId) === String(eventId));
+          }
+        }
+
+        // STEP 7: Set normalized event data
         setEvent({
           id: foundEvent.ID || foundEvent.id || eventId,
           name: foundEvent.Name || foundEvent.name || "Event",
@@ -262,6 +273,7 @@ export default function EventDetails() {
           schedules: parsedSchedules, // Use dynamic schedules
           feedbackFormLink: foundEvent.FeedbackFormLink || "",
           feedbackEnabled: String(foundEvent.FeedbackEnabled || "false"),
+          isBooked: isBooked
         });
 
         setLoadingEvent(false);
@@ -380,6 +392,12 @@ export default function EventDetails() {
                 <>{event.auditorium} • {event.capacity} seats</>
               )}
             </div>
+
+            {event.isBooked && (
+              <div className="booked-badge-detail">
+                ✅ You have already booked a ticket for this event.
+              </div>
+            )}
 
             <button
               className="btn secondary ticket-btn"
@@ -522,9 +540,10 @@ export default function EventDetails() {
         )}
 
         <button
-          className="btn primary book-now-btn"
-          disabled={!selectedSchedule}
+          className={`btn primary book-now-btn ${event.isBooked ? 'disabled-success' : ''}`}
+          disabled={!selectedSchedule || event.isBooked}
           onClick={() => {
+            if (event.isBooked) return;
             if (event.eventType === "Venue") {
               // Direct Booking Confirmation for Venue
               navigate(`/booking-confirmation`, {
@@ -545,7 +564,7 @@ export default function EventDetails() {
             }
           }}
         >
-          {event.eventType === "Venue" ? "Book Entry" : "Select Seats"}
+          {event.isBooked ? "✓ Ticket Booked" : (event.eventType === "Venue" ? "Book Entry" : "Select Seats")}
         </button>
       </div>
     </div>

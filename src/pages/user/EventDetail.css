@@ -1,3 +1,36 @@
+.booked-badge-detail {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  margin: 15px 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-block;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.book-now-btn.disabled-success {
+  background: linear-gradient(135deg, #27ae60, #1e8449) !important;
+  cursor: not-allowed !important;
+  opacity: 0.9 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+@keyframes fadeInDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .event-detail-page {
   font-family: 'Poppins', sans-serif;
   /* Match UserHome Gradient */
