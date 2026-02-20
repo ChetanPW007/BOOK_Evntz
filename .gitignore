@@ -26,4 +26,5 @@ venv/
 __pycache__/
 
 backend/config/credentials.json
+.env
 
