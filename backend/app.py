@@ -88,7 +88,7 @@ def debug_email():
         EmailService.send_email_async(
             to_email=sender, # Send to self
             subject="Test Email from PythonAnywhere",
-            body="<h1>It Works!</h1><p>If you see this, email configuration is correct.</p>"
+            html_content="<h1>It Works!</h1><p>If you see this, email configuration is correct.</p>"
         )
         
         return jsonify({
