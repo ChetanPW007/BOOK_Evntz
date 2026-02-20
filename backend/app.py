@@ -64,7 +64,7 @@ def handle_exception(e):
         "message": f"Global Server Error: {str(e)}",
         "type": type(e).__name__
     }), 500
-    }), 500
+
 
 @app.route("/api/debug/email", methods=["GET"])
 def debug_email():
