@@ -27,7 +27,8 @@ ALLOWED_ORIGINS = [
 ]
 
 # Regex to allow ANY Vercel preview URL for this project
-VERCEL_PREVIEW_REGEX = r"https://book-evntz.*\.vercel\.app"
+import re
+VERCEL_PREVIEW_REGEX = re.compile(r"https://book-evntz.*\.vercel\.app")
 
 CORS(
     app,
