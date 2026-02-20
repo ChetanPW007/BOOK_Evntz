@@ -16,13 +16,13 @@ app = Flask(__name__)
 # CORS Configuration
 # ---------------------------
 # Allow localhost, production, and ALL Vercel preview deployments
-ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://turbo007.pythonanywhere.com",
     "https://book-evntz.vercel.app",
     "https://book-evntz-pw1umm1v3-chetans-projects-c8f1a790.vercel.app",
     "https://book-evntz-wjk3401u7-chetans-projects-c8f1a790.vercel.app",
+    "https://book-evntz-8lc06te2n-chetans-projects-c8f1a790.vercel.app",
 ]
 
 # Regex to allow ANY Vercel preview URL for this project
