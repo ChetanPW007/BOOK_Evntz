@@ -342,7 +342,7 @@ function EventBookingsList({ event, onBack }) {
                 <tr key={b.BookingID}>
                   <td className="admin-muted" style={{ fontFamily: 'monospace' }}>{b.BookingID}</td>
                   <td>
-                    <div>{b.UserEmail || b.user || "User"}</div>
+                    <div>{b.Email || "User"}</div>
                     <small className="admin-muted">{b.USN}</small>
                   </td>
                   <td>

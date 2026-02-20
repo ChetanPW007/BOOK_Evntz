@@ -76,6 +76,14 @@ def backfill_bookings():
         att_headers = gs._headers(ws_att)
         
         att_headers_changed = False
+        
+        # FIX TYPO: Attendend -> Attended
+        for idx, h in enumerate(att_headers):
+            if h.lower() == "attendend":
+                print(f"🔧 Fixing typo: '{h}' -> 'Attended'...")
+                att_headers[idx] = "Attended"
+                att_headers_changed = True
+
         for col_name in ["EventName", "Email"]:
             if col_name not in att_headers:
                 print(f"➕ Adding '{col_name}' header to Attendance sheet...")
