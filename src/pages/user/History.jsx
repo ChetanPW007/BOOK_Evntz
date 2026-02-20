@@ -393,7 +393,7 @@ export default function History() {
                         className="feedback-btn"
                         onClick={(ev) => ev.stopPropagation()}
                       >
-                        📝 Feedback
+                        📋 Attendance
                       </a>
                     )}
                   </div>

@@ -128,10 +128,23 @@ def add_booking():
         except Exception as e:
             print(f"Error reading ticket codes: {e}")
 
+    # Fetch event name for the booking record
+    events = gs.get_events()
+    ev_for_booking = next((e for e in events if str(e.get("ID")) == str(event_id)), None)
+    event_name = ev_for_booking.get("Name", "Unknown") if ev_for_booking else "Unknown"
+
+    # Fetch user email from Users sheet
+    users = gs.get_users()
+    target_usn = str(usn).strip().lower()
+    user_record = next((u for u in users if str(u.get("USN")).strip().lower() == target_usn), None)
+    user_email = user_record.get("Email", "") if user_record else ""
+
     booking = {
         "BookingID": data.get("BookingID") or chosen_id,
         "USN": usn,
         "EventID": event_id,
+        "EventName": event_name,
+        "Email": user_email,
         "Seats": seats_str,
         "Auditorium": data.get("Auditorium") or data.get("auditorium") or "",
         "QR URL": data.get("QR URL") or data.get("qr") or f"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={urllib.parse.quote_plus(str({'bookingId': data.get('BookingID') or chosen_id}))}",

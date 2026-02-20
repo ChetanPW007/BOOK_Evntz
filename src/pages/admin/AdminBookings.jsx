@@ -157,7 +157,11 @@ function NewBookingDialog({ onClose, onSaved }) {
 
     // Use selected seats ARRAY if layout active
     let finalSeats = form.seats; // Fallback to number
-    if (selectedEventObj?.SeatLayout && form.selectedSeats.length > 0) {
+
+    // Venue-type events: auto-assign General Entry (no seat selection)
+    if (selectedEventObj?.EventType === "Venue") {
+      finalSeats = "General Entry";
+    } else if (selectedEventObj?.SeatLayout && form.selectedSeats.length > 0) {
       finalSeats = form.selectedSeats.join(","); // Send "A1,A2,A3"
     } else if (selectedEventObj?.SeatLayout && form.selectedSeats.length === 0) {
       return alert("Please select at least one seat.");
@@ -226,7 +230,11 @@ function NewBookingDialog({ onClose, onSaved }) {
 
           <div>
             <label>Seat Selection {form.selectedSeats.length > 0 ? `(${form.selectedSeats.length} Selected)` : ''}</label>
-            {selectedEventObj?.SeatLayout ? (
+            {selectedEventObj?.EventType === "Venue" ? (
+              <div style={{ padding: '15px', background: '#1a1a1a', borderRadius: '8px', border: '1px solid #333', color: '#2ecc71' }}>
+                ✅ General Entry — No seat selection required for venue events
+              </div>
+            ) : selectedEventObj?.SeatLayout ? (
               <>
                 {renderSeatMap()}
                 <div style={{ marginTop: 5, fontSize: 12, color: '#aaa' }}>
@@ -242,7 +250,7 @@ function NewBookingDialog({ onClose, onSaved }) {
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

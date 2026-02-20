@@ -15,7 +15,7 @@
 .admin-shell {
   display: flex;
   min-height: 100vh;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Poppins', sans-serif;
   background: var(--admin-bg);
   color: var(--admin-text);
 }

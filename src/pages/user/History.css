@@ -5,7 +5,7 @@
   min-height: 100vh;
   padding-top: 90px;
   padding-bottom: 35px;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Poppins', sans-serif;
   color: #fff;
 }
 
@@ -280,7 +280,7 @@
   }
 }
 
-/* === Feedback Button === */
+/* === Attendance Button === */
 .feedback-btn {
   display: inline-block;
   margin-top: 8px;

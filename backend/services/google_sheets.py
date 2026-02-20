@@ -364,7 +364,7 @@ class GoogleSheets:
         except Exception:
             return []
 
-    def mark_attendance(self, event_id, usn, attended=True, schedule=None, auditorium=None):
+    def mark_attendance(self, event_id, usn, attended=True, schedule=None, auditorium=None, event_name=None, email=None):
         rows = self.read_range(SHEET_ATTENDANCE)
         try:
             ws = self._worksheet(SHEET_ATTENDANCE)
@@ -387,6 +387,10 @@ class GoogleSheets:
                 r["Timestamp"] = str(datetime.utcnow())
                 if auditorium:
                     r["Auditorium"] = str(auditorium)
+                if event_name:
+                    r["EventName"] = str(event_name)
+                if email:
+                    r["Email"] = str(email)
                 return self.write_row_by_index(SHEET_ATTENDANCE, i, r)
         
         # append new record
@@ -398,6 +402,10 @@ class GoogleSheets:
         new_row["Timestamp"] = str(datetime.utcnow())
         if auditorium:
             new_row["Auditorium"] = str(auditorium)
+        if event_name:
+            new_row["EventName"] = str(event_name)
+        if email:
+            new_row["Email"] = str(email)
         return self.append_row(SHEET_ATTENDANCE, new_row)
 
     def delete_attendance_for_event(self, event_id):
