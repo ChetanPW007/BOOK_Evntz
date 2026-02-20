@@ -187,6 +187,10 @@ def add_booking():
                     except:
                         date_str = schedule # fallback
 
+                # Get Event Banner (Poster)
+                event_poster = ev.get("Poster") if ev else ""
+                qr_url = booking.get("QR URL")
+
                 EmailService.send_booking_confirmation(
                     user_email=user.get("Email"),
                     user_name=user.get("Name", "Student"),
@@ -196,7 +200,9 @@ def add_booking():
                         "date": date_str,
                         "time": time_str,
                         "booking_id": booking.get("BookingID"),
-                        "seats": booking.get("Seats")
+                        "seats": booking.get("Seats"),
+                        "poster": event_poster,
+                        "qr_url": qr_url
                     }
                 )
             else:
