@@ -139,7 +139,7 @@ export default function MyTickets() {
 
                 <p>
                   <strong>USN: </strong>
-                  {t.usn || "—"}
+                  {t.usn || t.USN || "—"}
                 </p>
 
                 {/* Auditorium Display */}

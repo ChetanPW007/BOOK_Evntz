@@ -166,14 +166,35 @@ def add_booking():
                     event_name = ev.get("Name")
                 
                 print(f"DEBUG: Sending email to {user.get('Email')} for event {event_name}")
+                # Parse Date/Time
+                date_str = "TBA"
+                time_str = ""
+                schedule = booking.get("Schedule", "")
+
+                if schedule:
+                    try:
+                        # Try parsing ISO format (2026-02-21T10:36:00)
+                        if "T" in schedule:
+                            dt = datetime.fromisoformat(schedule)
+                            date_str = dt.strftime("%a, %d %b %Y") # Sat, 21 Feb 2026
+                            time_str = dt.strftime("%I:%M %p")     # 10:36 AM
+                        else:
+                            # Fallback for old format "YYYY-MM-DD HH:MM"
+                            parts = schedule.split(' ', 1)
+                            date_str = parts[0]
+                            if len(parts) > 1:
+                                time_str = parts[1]
+                    except:
+                        date_str = schedule # fallback
+
                 EmailService.send_booking_confirmation(
                     user_email=user.get("Email"),
                     user_name=user.get("Name", "Student"),
                     booking_details={
                         "event_name": event_name,
                         "venue": booking.get("Auditorium"),
-                        "date": booking.get("Schedule", "").split(' ', 1)[0] if booking.get("Schedule") else "TBA",
-                        "time": booking.get("Schedule", "").split(' ', 1)[1] if booking.get("Schedule") and ' ' in booking.get("Schedule") else "",
+                        "date": date_str,
+                        "time": time_str,
                         "booking_id": booking.get("BookingID"),
                         "seats": booking.get("Seats")
                     }
