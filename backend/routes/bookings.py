@@ -147,31 +147,49 @@ def add_booking():
         
         # Fetch user email (assuming USN is the key or we have a user lookup)
         # We need to fetch user details from Sheets to get the email
+        print(f"DEBUG: Attempting to send email for USN: {usn}")
         users = gs.get_users()
-        user = next((u for u in users if str(u.get("USN")).lower() == str(usn).lower()), None)
+        print(f"DEBUG: Fetched {len(users)} users from sheet.")
         
-        if user and user.get("Email"):
-            # Get Event Details for the email
-            event_name = "Event"
-            events = gs.get_events()
-            ev = next((e for e in events if str(e.get("ID")) == str(event_id)), None)
-            if ev:
-                event_name = ev.get("Name")
+        # normalized lookup
+        target_usn = str(usn).strip().lower()
+        user = next((u for u in users if str(u.get("USN")).strip().lower() == target_usn), None)
+        
+        if user:
+            print(f"DEBUG: User found: {user.get('Name')} | Email: {user.get('Email')}")
+            if user.get("Email"):
+                # Get Event Details for the email
+                event_name = "Event"
+                events = gs.get_events()
+                ev = next((e for e in events if str(e.get("ID")) == str(event_id)), None)
+                if ev:
+                    event_name = ev.get("Name")
+                
+                print(f"DEBUG: Sending email to {user.get('Email')} for event {event_name}")
+                EmailService.send_booking_confirmation(
+                    user_email=user.get("Email"),
+                    user_name=user.get("Name", "Student"),
+                    booking_details={
+                        "event_name": event_name,
+                        "venue": booking.get("Auditorium"),
+                        "date": booking.get("Schedule", "").split(' ', 1)[0] if booking.get("Schedule") else "TBA",
+                        "time": booking.get("Schedule", "").split(' ', 1)[1] if booking.get("Schedule") and ' ' in booking.get("Schedule") else "",
+                        "booking_id": booking.get("BookingID"),
+                        "seats": booking.get("Seats")
+                    }
+                )
+            else:
+                 print("DEBUG: User found but NO EMAIL in record.")
+        else:
+            print(f"DEBUG: User with USN {target_usn} NOT FOUND in Users sheet.")
+            # Print available USNs to help debug case/whitespace issues
+            all_usns = [str(u.get("USN")) for u in users]
+            print(f"DEBUG: Available USNs: {all_usns[:10]}...") 
 
-            EmailService.send_booking_confirmation(
-                user_email=user.get("Email"),
-                user_name=user.get("Name", "Student"),
-                booking_details={
-                    "event_name": event_name,
-                    "venue": booking.get("Auditorium"),
-                    "date": booking.get("Schedule", "").split(' ', 1)[0] if booking.get("Schedule") else "TBA",
-                    "time": booking.get("Schedule", "").split(' ', 1)[1] if booking.get("Schedule") and ' ' in booking.get("Schedule") else "",
-                    "booking_id": booking.get("BookingID"),
-                    "seats": booking.get("Seats")
-                }
-            )
     except Exception as e:
         print(f"Email sending failed (non-blocking): {e}")
+        import traceback
+        traceback.print_exc()
 
     # Correctly return the ID stored in the dict, not the boolean result of add_booking
     return jsonify({"status":"success","bookingId": booking["BookingID"]}), 201
