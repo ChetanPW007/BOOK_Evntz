@@ -63,7 +63,49 @@ def handle_exception(e):
         "status": "error",
         "message": f"Global Server Error: {str(e)}",
         "type": type(e).__name__
+    return jsonify({
+        "status": "error",
+        "message": f"Global Server Error: {str(e)}",
+        "type": type(e).__name__
     }), 500
+
+@app.route("/api/debug/email", methods=["GET"])
+def debug_email():
+    try:
+        from backend.services.email_service import EmailService
+        import os
+        
+        # 1. Check Env Vars
+        sender = os.environ.get("EMAIL_SENDER")
+        password = os.environ.get("EMAIL_PASSWORD")
+        
+        if not sender or not password:
+            return jsonify({
+                "status": "failed", 
+                "message": "Credentials missing from environment",
+                "sender_set": bool(sender),
+                "password_set": bool(password)
+            }), 500
+            
+        # 2. Try Sending
+        EmailService.send_email_async(
+            to_email=sender, # Send to self
+            subject="Test Email from PythonAnywhere",
+            body="<h1>It Works!</h1><p>If you see this, email configuration is correct.</p>"
+        )
+        
+        return jsonify({
+            "status": "success", 
+            "message": f"Test email queued for {sender}",
+            "sender": sender
+        }), 200
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "status": "error", 
+            "message": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
 
 # ---------------------------
 # Start Server
